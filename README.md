@@ -3,9 +3,10 @@ REEFSCAPE robot code
 
 [Controller layouts](https://www.padcrafter.com/?templates=Driver%7COperator&plat=0%7C0&col=%2523D3D3D3%2C%25233E4B50%2C%2523FFFFFF&yButton=Speed+Up%7C&aButton=Slow+Down%7C&dpadUp=%7C&leftTrigger=Lock%7C&leftStick=X%2FY+Movement%7C&rightStickClick=Rotation%7C&startButton=Toggle+Field+Oriented%7C&backButton=Reset+Heading%7C&dpadRight=Align+to+right+pole+of+nearest+side+of+Reef%7C&dpadLeft=Align+to+left+pole+of+nearest+side+of+Reef%7C&rightTrigger=%7C)
 
-![alt text](image.png)
+![Driver](https://github.com/user-attachments/assets/c7890702-2f54-451a-b7a2-783b65ca696d)
 
-![alt text](image-1.png)
+![Operator](https://github.com/user-attachments/assets/6a99e930-3b5e-40a8-92d2-1614c3cda506)
+
 
 ## TODO
 - [ ] Swerve [NEW: MK4n!]
