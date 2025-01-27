@@ -146,6 +146,16 @@ public final class Constants {
     public static final boolean frontRightSteerInverted = false;
     public static final boolean   backLeftSteerInverted = false;
     public static final boolean  backRightSteerInverted = false;
+
+    /* Elevator */
+    public static final int leftElevatorID = 50;
+    public static final int rightElevatorID = 51;
+
+    public static final int leftShooterID = 52;
+    public static final int rightShooterID = 53;
+
+    public static final int ticklerAngleID = 54;
+    public static final int ticklerSpinID = 55;
   }
   
 }
