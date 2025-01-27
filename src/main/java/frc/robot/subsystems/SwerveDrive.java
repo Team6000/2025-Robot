@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import com.studica.frc.AHRS;
@@ -313,7 +312,7 @@ public class SwerveDrive extends SubsystemBase {
         DoubleSupplier driveSupplier, 
         DoubleSupplier strafeSupplier, 
         DoubleSupplier rotSupplier) {
-            return runOnce(
+            return run(
                 () -> {
                     double drive = driveSupplier.getAsDouble();
                     drive *= Math.abs(drive);

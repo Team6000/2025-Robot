@@ -118,7 +118,7 @@ public class ReduxSwerveModule extends SubsystemBase {
      */
     public Rotation2d getCanandmagAngle() {        
         double unsignedAngle =
-            (Units.rotationsToRadians(canandmag.getAbsPosition()) - offset.getRadians()) % (2 * Math.PI);
+            (Units.rotationsToRadians(canandmag.getAbsPosition()) /* - offset.getRadians() */) % (2 * Math.PI);
         return new Rotation2d(unsignedAngle);
     }
 
