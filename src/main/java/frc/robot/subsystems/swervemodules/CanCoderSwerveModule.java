@@ -1,16 +1,19 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.swervemodules;
 
+import static edu.wpi.first.units.Units.Radians;
+
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.reduxrobotics.sensors.canandmag.Canandmag;
-import com.reduxrobotics.sensors.canandmag.CanandmagSettings;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.epilogue.Logged;
@@ -18,12 +21,11 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
 @Logged
-public class ReduxSwerveModule extends SubsystemBase {
+public class CanCoderSwerveModule extends SubsystemBase {
     private final SparkMax driveMotor;
     private final SparkMax steerMotor;
 
@@ -40,9 +42,9 @@ public class ReduxSwerveModule extends SubsystemBase {
     @NotLogged
     private final SparkMaxConfig steerConfig = new SparkMaxConfig();
 
-    private final Canandmag canandmag;
+    private final CANcoder canCoder;
     @NotLogged
-    private final CanandmagSettings canandmagSettings = new CanandmagSettings();
+    CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
     private final Rotation2d offset;
 
     /**
@@ -53,19 +55,19 @@ public class ReduxSwerveModule extends SubsystemBase {
      * <p> IDs: Front left - 1, front right - 2, back left - 3, back right - 4
      * 
      * 
-     * @param moduleId           Module number, used to determine SPARKMax and Canandmag IDs
+     * @param moduleId           Module number, used to determine SPARKMax and CanCoder IDs
      * @param driveMotorInverted Drive NEO is inverted.
      * @param steerMotorInverted Steer NEO is inverted.
-     * @param steerOffsetRadians Offset of Canandmag reading from forward.
+     * @param steerOffsetRadians Offset of CANCoder reading from forward.
      */
-    public ReduxSwerveModule(int moduleID, boolean driveMotorInverted, boolean steerMotorInverted, double steerOffsetRadians) {
+    public CanCoderSwerveModule(int moduleID, boolean driveMotorInverted, boolean steerMotorInverted, double steerOffsetRadians) {
         moduleID *= 10;
-        int driveMotorID = moduleID+1;
-        int steerMotorID = moduleID+2;
-        int canandmagID = moduleID+3;
+        int driveMotorId = moduleID+1;
+        int steerMotorId = moduleID+2;
+        int canCoderId = moduleID+3;
         
-        driveMotor = new SparkMax(driveMotorID,MotorType.kBrushless);
-        steerMotor = new SparkMax(steerMotorID,MotorType.kBrushless);
+        driveMotor = new SparkMax(driveMotorId,MotorType.kBrushless);
+        steerMotor = new SparkMax(steerMotorId,MotorType.kBrushless);
 
         driveConfig
             .inverted(driveMotorInverted)
@@ -97,18 +99,22 @@ public class ReduxSwerveModule extends SubsystemBase {
         steerController = steerMotor.getClosedLoopController();
         driveController = driveMotor.getClosedLoopController();
 
-        canandmag = new Canandmag(canandmagID);
+        canCoder = new CANcoder(canCoderId);
 
         offset = new Rotation2d(steerOffsetRadians);
+
+        canCoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
+        canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+        canCoder.getConfigurator().apply(canCoderConfig);
 
         initSteerOffset();
     }
     
     /**
-    * Initializes the steer motor encoder to the value of the Canandmag, accounting for the offset.
+    * Initializes the steer motor encoder to the value of the CANCoder, accounting for the offset.
     */
     public void initSteerOffset() {
-       steerEncoder.setPosition(getCanandmagAngle().getRadians());
+       steerEncoder.setPosition(getCanCoderAngle().getRadians());
     }
     
     /**
@@ -116,9 +122,12 @@ public class ReduxSwerveModule extends SubsystemBase {
      * 
      * @return The current angle of the module between 0 and 2 * PI.
      */
-    public Rotation2d getCanandmagAngle() {        
+    public Rotation2d getCanCoderAngle() {        
         double unsignedAngle =
-            (Units.rotationsToRadians(canandmag.getAbsPosition()) /* - offset.getRadians() */) % (2 * Math.PI);
+            canCoder.getAbsolutePosition().getValue()
+            .minus(offset.getMeasure())
+            .in(Radians) % (2 * Math.PI);
+
         return new Rotation2d(unsignedAngle);
     }
 
@@ -129,7 +138,7 @@ public class ReduxSwerveModule extends SubsystemBase {
      */
     public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        driveEncoder.getPosition(), getCanandmagAngle());
+        driveEncoder.getPosition(), getCanCoderAngle());
     }
 
     /**
@@ -167,7 +176,7 @@ public class ReduxSwerveModule extends SubsystemBase {
     }
 
     public double getRelativeVelocityMetersPerSecond(double thetaRad) {
-        double rel = getCanandmagAngle().getDegrees() % 90.0;
+        double rel = getCanCoderAngle().getDegrees() % 90.0;
         if(rel > 90.0 && rel < 270.0) rel *= -1.0;
         return getCurrentVelocityMetersPerSecond() * (rel / 90.0);
     }
@@ -239,8 +248,6 @@ public class ReduxSwerveModule extends SubsystemBase {
     }
 
     public void isTestMode(boolean isTestMode) {
-        canandmagSettings.setDisableZeroButton(!isTestMode);
-        canandmag.setSettings(canandmagSettings, 0.5, 3);
-        canandmag.setPartyMode(isTestMode ? 10 : 0); // if true, blink at 2Hz, else 0
     }
+
 }

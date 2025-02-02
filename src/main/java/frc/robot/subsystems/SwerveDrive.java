@@ -22,33 +22,34 @@ import edu.wpi.first.wpilibj.Preferences;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.*;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.subsystems.swervemodules.DataPortSwerveModule;
 
 @Logged
 public class SwerveDrive extends SubsystemBase {
     // Initialize new swerve module objects
     private final DataPortSwerveModule frontLeftMod = new DataPortSwerveModule(
         1,
-        CANDevices.frontLeftDriveInverted,
-        CANDevices.frontLeftSteerInverted,
+        DriveConstants.frontLeftDriveInverted,
+        DriveConstants.frontLeftSteerInverted,
         DriveConstants.frontLeftModuleOffset);
 
     private final DataPortSwerveModule frontRightMod = new DataPortSwerveModule(
         2,
-        CANDevices.frontRightDriveInverted,
-        CANDevices.frontRightSteerInverted,
+        DriveConstants.frontRightDriveInverted,
+        DriveConstants.frontRightSteerInverted,
         DriveConstants.frontRightModuleOffset);
 
     private final DataPortSwerveModule backLeftMod = new DataPortSwerveModule(
         3,
-        CANDevices.backLeftDriveInverted,
-        CANDevices.backLeftSteerInverted,
+        DriveConstants.backLeftDriveInverted,
+        DriveConstants.backLeftSteerInverted,
         DriveConstants.backLeftModuleOffset);
 
     private final DataPortSwerveModule backRightMod = new DataPortSwerveModule(
         4,
-        CANDevices.backRightDriveInverted,
-        CANDevices.backRightSteerInverted,  
+        DriveConstants.backRightDriveInverted,
+        DriveConstants.backRightSteerInverted,  
         DriveConstants.backRightModuleOffset);
 
     private final AHRS navX = new AHRS(AHRS.NavXComType.kUSB1);

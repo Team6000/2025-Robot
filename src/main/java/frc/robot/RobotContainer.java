@@ -30,18 +30,18 @@ public class RobotContainer {
   // Initialize subsystems.
   private final SwerveDrive swerveDrive = new SwerveDrive();
 
-  // Initialize auto selector.
-  SendableChooser<Command> autoSelector = new SendableChooser<Command>();
-
-  // Create Field2d object to put on Dashboard
-  private final Field2d field = new Field2d();
-
   @NotLogged
   private final CommandXboxController driverController =
     new CommandXboxController(ControllerConstants.driverControllerPort);
   @NotLogged
   private final CommandXboxController codriverController =
     new CommandXboxController(ControllerConstants.codriverControllerPort);
+
+  // Initialize auto selector.
+  private final SendableChooser<Command> autoSelector = new SendableChooser<Command>();
+
+  // Create Field2d object to put on Dashboard
+  private final Field2d field = new Field2d();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

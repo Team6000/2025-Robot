@@ -29,13 +29,57 @@ public final class Constants {
   }
 
   public static class DriveConstants {
+    /* FOR REFERENCE: ACTUAL CODE DOESN'T USE THESE */
+    /* Swerve Module IDs
+     * 1 = Front Left
+     * 2 = Front Right
+     * 3 = Back Left
+     * 4 = Back Right
+     */
+
+    /* Swerve Motor IDs
+     * 1 = Drive
+     * 2 = Turn
+     */
+
+    /* Swerve Encoder ID
+     * 3
+    */
+
+    /*
+    public static final int frontLeftDriveMotorId = 11;
+    public static final int frontLeftSteerMotorId = 12;
+    public static final int frontLeftSteerEncoderId = 13;
+
+    public static final int frontRightDriveMotorId = 21;
+    public static final int frontRightSteerMotorId = 22;
+    public static final int frontRightSteerEncoderId = 23;
+
+    public static final int rearLeftDriveMotorId = 31;
+    public static final int rearLeftSteerMotorId = 32;
+    public static final int rearLeftSteerEncoderId = 33;
+
+    public static final int rearRightDriveMotorId = 41;
+    public static final int rearRightSteerMotorId = 42;
+    public static final int rearRightSteerEncoderId = 43;
+    */
+
+    public static final boolean  frontLeftDriveInverted = false;
+    public static final boolean frontRightDriveInverted = false;
+    public static final boolean   backLeftDriveInverted = false;
+    public static final boolean  backRightDriveInverted = false;
+
+    public static final boolean  frontLeftSteerInverted = false;
+    public static final boolean frontRightSteerInverted = false;
+    public static final boolean   backLeftSteerInverted = false;
+    public static final boolean  backRightSteerInverted = false;
+
     public static final double steerkP = 0.37431;
     public static final double steerkI = 0;
     public static final double steerkD = 0;
 
     public static final int driveCurrentLimitAmps = 35;
     public static final int steerCurrentLimitAmps = 25;
-
     
     /**
      * The track width from wheel center to wheel center.
@@ -102,60 +146,50 @@ public final class Constants {
     public static RobotConfig PPRobotConfig;
   }
 
-  public static final class CANDevices {
-    public static final int powerDistributionHubId = 0;
+  public static class ElevatorConstants {
+    public static final int leftID = 50; /* leader */
+    public static final int rightID = 51; /* follower */
 
-    /* FOR REFERENCE: ACTUAL CODE DOESN'T USE THESE */
-    /* Swerve Module IDs
-     * 1 = Front Left
-     * 2 = Front Right
-     * 3 = Back Left
-     * 4 = Back Right
-     */
+    public static final boolean leftInverted = false;
+    public static final boolean rightInverted = false;
 
-    /* Swerve Motor IDs
-     * 1 = Drive
-     * 2 = Turn
-     */
+    public static final int currentLimit = 50;
 
-    /* Swerve Encoder ID
-     * 3
-    */
-    public static final int frontLeftDriveMotorId = 11;
-    public static final int frontLeftSteerMotorId = 12;
-    public static final int frontLeftSteerEncoderId = 13;
+    public static final double forwardSoftLimit = 100;
+    public static final double reverseSoftLimit = 100;
+  }
 
-    public static final int frontRightDriveMotorId = 21;
-    public static final int frontRightSteerMotorId = 22;
-    public static final int frontRightSteerEncoderId = 23;
-
-    public static final int rearLeftDriveMotorId = 31;
-    public static final int rearLeftSteerMotorId = 32;
-    public static final int rearLeftSteerEncoderId = 33;
-
-    public static final int rearRightDriveMotorId = 41;
-    public static final int rearRightSteerMotorId = 42;
-    public static final int rearRightSteerEncoderId = 43;
-
-    public static final boolean  frontLeftDriveInverted = false;
-    public static final boolean frontRightDriveInverted = false;
-    public static final boolean   backLeftDriveInverted = false;
-    public static final boolean  backRightDriveInverted = false;
-
-    public static final boolean  frontLeftSteerInverted = false;
-    public static final boolean frontRightSteerInverted = false;
-    public static final boolean   backLeftSteerInverted = false;
-    public static final boolean  backRightSteerInverted = false;
-
-    /* Elevator */
-    public static final int leftElevatorID = 50;
-    public static final int rightElevatorID = 51;
-
+  public static class ShooterConstants {
     public static final int leftShooterID = 52;
     public static final int rightShooterID = 53;
 
-    public static final int ticklerAngleID = 54;
-    public static final int ticklerSpinID = 55;
+    public static final boolean leftInverted = false;
+    public static final boolean rightInverted = false;
+
+    public static final int currentLimit = 50;
+
+    public static final double L4speed = 1;
+    public static final double L23speed = 1;
+    public static final double L1speed = 1;
+    public static final double L1speedDifferential = 1;
+  }
+  
+  public static class TicklerConstants {
+    public static final int angleMotorID = 54;
+    public static final int spinMotorID = 55;
+    public static final int angleEncoderID = 56;
+
+    public static final boolean angleInverted = false;
+    public static final boolean spinInverted = false;
+
+    public static final int angleCurrentLimit = 50;
+    public static final int spinCurrentLimit = 50;
+
+    public static final double angleRate = 1;
+    public static final double spinSpeed = 1;
+
+    public static final double angleForwardLimit = 1000;
+    public static final double angleReverseLimit = 1000;
   }
   
 }

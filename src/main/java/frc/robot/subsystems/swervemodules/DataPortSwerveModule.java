@@ -1,19 +1,15 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.swervemodules;
 
-import static edu.wpi.first.units.Units.Radians;
-
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.epilogue.Logged;
@@ -21,11 +17,12 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
 @Logged
-public class CanCoderSwerveModule extends SubsystemBase {
+public class DataPortSwerveModule extends SubsystemBase {
     private final SparkMax driveMotor;
     private final SparkMax steerMotor;
 
@@ -42,32 +39,33 @@ public class CanCoderSwerveModule extends SubsystemBase {
     @NotLogged
     private final SparkMaxConfig steerConfig = new SparkMaxConfig();
 
-    private final CANcoder canCoder;
-    @NotLogged
-    CANcoderConfiguration canCoderConfig = new CANcoderConfiguration();
+    private final AbsoluteEncoder encoder;
+
     private final Rotation2d offset;
 
     /**
-     * Create a new SwerveModule.
+     * Create a new SwerveModule, using an Absolute Encoder plugged into the Data Port of the STEER SparkMax.
      * 
      * <p> Tracks and controls a single swerve module
      * 
      * <p> IDs: Front left - 1, front right - 2, back left - 3, back right - 4
      * 
      * 
-     * @param moduleId           Module number, used to determine SPARKMax and CanCoder IDs
+     * @param moduleId           Module number, used to determine SPARKMax and Canandmag IDs
      * @param driveMotorInverted Drive NEO is inverted.
      * @param steerMotorInverted Steer NEO is inverted.
-     * @param steerOffsetRadians Offset of CANCoder reading from forward.
+     * @param steerOffsetRadians Offset of Canandmag reading from forward.
      */
-    public CanCoderSwerveModule(int moduleID, boolean driveMotorInverted, boolean steerMotorInverted, double steerOffsetRadians) {
+    public DataPortSwerveModule(int moduleID, boolean driveMotorInverted, boolean steerMotorInverted, double steerOffsetRadians) {
         moduleID *= 10;
-        int driveMotorId = moduleID+1;
-        int steerMotorId = moduleID+2;
-        int canCoderId = moduleID+3;
+        int driveMotorID = moduleID+1;
+        int steerMotorID = moduleID+2;
+        // int encoderID = moduleID+3; //unnecessary because encoder is in SparkMAX data port
+
+        offset = new Rotation2d(steerOffsetRadians);
         
-        driveMotor = new SparkMax(driveMotorId,MotorType.kBrushless);
-        steerMotor = new SparkMax(steerMotorId,MotorType.kBrushless);
+        driveMotor = new SparkMax(driveMotorID,MotorType.kBrushless);
+        steerMotor = new SparkMax(steerMotorID,MotorType.kBrushless);
 
         driveConfig
             .inverted(driveMotorInverted)
@@ -91,6 +89,8 @@ public class CanCoderSwerveModule extends SubsystemBase {
             .pid(DriveConstants.steerkP,
                  DriveConstants.steerkI,
                  DriveConstants.steerkD);
+        steerConfig.absoluteEncoder
+            .zeroOffset(steerOffsetRadians / (2 * Math.PI));
         steerMotor.configure(steerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
 
         driveEncoder = driveMotor.getEncoder();
@@ -99,35 +99,24 @@ public class CanCoderSwerveModule extends SubsystemBase {
         steerController = steerMotor.getClosedLoopController();
         driveController = driveMotor.getClosedLoopController();
 
-        canCoder = new CANcoder(canCoderId);
-
-        offset = new Rotation2d(steerOffsetRadians);
-
-        canCoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
-        canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-        canCoder.getConfigurator().apply(canCoderConfig);
-
-        initSteerOffset();
+        encoder = steerMotor.getAbsoluteEncoder();
     }
     
     /**
-    * Initializes the steer motor encoder to the value of the CANCoder, accounting for the offset.
+    * Initializes the steer NEO's encoder to the value of the Canandmag, accounting for the offset.
     */
     public void initSteerOffset() {
-       steerEncoder.setPosition(getCanCoderAngle().getRadians());
+       steerEncoder.setPosition(getEncoderAngle().getRadians());
     }
     
     /**
-     * Returns the current angle of the module between 0 and 2 * PI.
+     * Returns the current angle of the wheel
      * 
-     * @return The current angle of the module between 0 and 2 * PI.
+     * @return The current angle of the wheel
      */
-    public Rotation2d getCanCoderAngle() {        
+    public Rotation2d getEncoderAngle() {
         double unsignedAngle =
-            canCoder.getAbsolutePosition().getValue()
-            .minus(offset.getMeasure())
-            .in(Radians) % (2 * Math.PI);
-
+            (Units.rotationsToRadians(encoder.getPosition())); // % (2 * Math.PI);
         return new Rotation2d(unsignedAngle);
     }
 
@@ -138,7 +127,7 @@ public class CanCoderSwerveModule extends SubsystemBase {
      */
     public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        driveEncoder.getPosition(), getCanCoderAngle());
+        driveEncoder.getPosition(), getEncoderAngle());
     }
 
     /**
@@ -176,7 +165,7 @@ public class CanCoderSwerveModule extends SubsystemBase {
     }
 
     public double getRelativeVelocityMetersPerSecond(double thetaRad) {
-        double rel = getCanCoderAngle().getDegrees() % 90.0;
+        double rel = getEncoderAngle().getDegrees() % 90.0;
         if(rel > 90.0 && rel < 270.0) rel *= -1.0;
         return getCurrentVelocityMetersPerSecond() * (rel / 90.0);
     }
@@ -248,6 +237,6 @@ public class CanCoderSwerveModule extends SubsystemBase {
     }
 
     public void isTestMode(boolean isTestMode) {
+        //unfortunately i don't believe there is a way to enable party mode while attached to a SparkMax
     }
-
 }
