@@ -25,11 +25,12 @@ REEFSCAPE robot code
 - [ ] Shooter
   - [ ] Write infrastructure
   - [ ] Determine good speed
-- [ ] Algae Manipulator (find better name?)
+  - [ ] Redux Canandcolor - prevent elevator/coral collision
+- [ ] Algae Harvestor
   - [ ] Write infrastructure
     - [ ] Part of Shooter.java? Own class?
   - [ ] Location/setpoint control -- Feedforward. PID probably not necessary
-  - [ ] CRITICAL: software limits: prevent collision with shooter, bumper, elevator
+  - [ ] CRITICAL: software limits: prevent collision - Absolute encoder: Rev or Redux
   - [ ] Determine good speed for outer wheels
 - [ ] Vision/Driving
   - [ ] Include AprilTags via LL2 in optometry

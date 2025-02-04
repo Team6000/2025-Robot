@@ -27,6 +27,12 @@ import frc.robot.subsystems.swervemodules.DataPortSwerveModule;
 
 @Logged
 public class SwerveDrive extends SubsystemBase {
+    private boolean isLocked = false;
+    private boolean isFieldOriented = true;
+    private String speedFactorKey = "Speed";
+    private double speedFactor = Preferences.getDouble(speedFactorKey, 0.3);
+    private boolean isTracking = false;
+
     // Initialize new swerve module objects
     private final DataPortSwerveModule frontLeftMod = new DataPortSwerveModule(
         1,
@@ -54,11 +60,6 @@ public class SwerveDrive extends SubsystemBase {
 
     private final AHRS navX = new AHRS(AHRS.NavXComType.kUSB1);
 
-    private boolean isLocked = false;
-    private boolean isFieldOriented = true;
-    private String speedFactorKey = "Speed";
-    private double speedFactor = Preferences.getDouble(speedFactorKey, 0.3);
-    private boolean isTracking = false;
     // Odometry for the robot, measured in meters for linear motion and radians for
     // rotational motion
     // Takes in kinematics and robot angle for parameters
