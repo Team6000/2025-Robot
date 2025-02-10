@@ -168,10 +168,10 @@ public final class Constants {
 
     public static final int currentLimit = 50;
 
-    public static final double L4speed = 1;
-    public static final double L23speed = 1;
-    public static final double L1speed = 1;
-    public static final double L1speedDifferential = 1;
+    public static final double L4Speed = 1;
+    public static final double MidSpeed = 1;
+    public static final double L1Speed = 1;
+    public static final double L1SpeedDifferential = 1;
   }
   
   public static class TicklerConstants {

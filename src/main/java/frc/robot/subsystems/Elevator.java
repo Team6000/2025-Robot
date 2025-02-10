@@ -22,7 +22,23 @@ public class Elevator extends SubsystemBase {
 
     }
 
-    public Command goToSetpointCommand() {
+    public Command goToL4() {
+        return Commands.none();
+    }
+
+    public Command goToL3() {
+        return Commands.none();
+    }
+    
+    public Command goToL2() {
+        return Commands.none();
+    }
+
+    public Command goToL1() {
+        return Commands.none();
+    }
+
+    public Command goToIntake() {
         return Commands.none();
     }
 
