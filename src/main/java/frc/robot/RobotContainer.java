@@ -5,7 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.ControllerConstants;
-import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.*;
 
 import com.pathplanner.lib.util.PathPlannerLogging;
 
@@ -29,7 +29,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // Initialize subsystems.
   private final SwerveDrive swerveDrive = new SwerveDrive();
-
+  private final Elevator elevator = new Elevator();
+  private final Shooter shooter = new Shooter();
+  private final Harvester harvester = new Harvester();
+  
   @NotLogged
   private final CommandXboxController driverController =
     new CommandXboxController(ControllerConstants.driverControllerPort);

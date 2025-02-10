@@ -28,9 +28,9 @@ REEFSCAPE robot code
   - [ ] Redux Canandcolor - prevent elevator/coral collision
 - [ ] Algae Harvestor
   - [ ] Write infrastructure
-    - [ ] Part of Shooter.java? Own class?
-  - [ ] Location/setpoint control -- Feedforward. PID probably not necessary
-  - [ ] CRITICAL: software limits: prevent collision - Absolute encoder: Rev or Redux
+  - [ ] State tracking necessary?
+  - [ ] Mostly operator-provided movement. Some location/setpoint control, see next
+  - [ ] CRITICAL: software limits: prevent collision - Absolute encoder: Rev
   - [ ] Determine good speed for outer wheels
 - [ ] Vision/Driving
   - [ ] Include AprilTags via LL2 in optometry
