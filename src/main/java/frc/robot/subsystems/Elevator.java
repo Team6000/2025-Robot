@@ -16,10 +16,21 @@ import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.MutAngle;
+import edu.wpi.first.units.measure.MutAngularVelocity;
+import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.ElevatorConstants.*;
 
 
@@ -144,4 +155,38 @@ public class Elevator extends SubsystemBase {
         
     }
 
+    private final MutVoltage appliedOutput = Volts.mutable(0);
+    private final MutAngle angle = Radians.mutable(0);
+    private final MutAngularVelocity velocity = RadiansPerSecond.mutable(0);
+    private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(),
+        new SysIdRoutine.Mechanism(
+            leader::setVoltage,
+            log -> {
+                log.motor("elevator")
+                    .voltage(
+                        appliedOutput.mut_replace(leader.getAppliedOutput() * RobotController.getBatteryVoltage(), Volts))
+                    .angularPosition(
+                        angle.mut_replace(mainEncoder.getPosition(), Rotations))
+                    .angularVelocity(
+                        velocity.mut_replace(mainEncoder.getVelocity(), RotationsPerSecond));
+            },
+            this));
+    /**
+     * Returns a command that will execute a quasistatic test in the given direction.
+     *
+     * @param direction The direction (forward or reverse) to run the test in
+     */
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return sysIdRoutine.quasistatic(direction);
+    }
+
+    /**
+     * Returns a command that will execute a dynamic test in the given direction.
+     *
+     * @param direction The direction (forward or reverse) to run the test in
+     */
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return sysIdRoutine.dynamic(direction);
+    }
 }
