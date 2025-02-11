@@ -5,10 +5,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.ShooterConstants.*;
 
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.reduxrobotics.sensors.canandcolor.Canandcolor;
 
 public class Shooter extends SubsystemBase {
     private static VictorSPX leftShooter = new VictorSPX(leftShooterID);
     private static VictorSPX rightShooter = new VictorSPX(rightShooterID);
+
+    private static Canandcolor proximity = new Canandcolor(canandcolorID);
 
     public Shooter() {
     }

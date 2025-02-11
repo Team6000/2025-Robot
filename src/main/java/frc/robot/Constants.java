@@ -157,11 +157,30 @@ public final class Constants {
 
     public static final double forwardSoftLimit = 100;
     public static final double reverseSoftLimit = 100;
+
+    public static final double kS = 0;
+    public static final double kG = 0;
+    public static final double kV = 0;
+    public static final double kA = 0;
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+
+    public static final double maxVelocity = 0;
+    public static final double maxAcceleration = 0;
+    public static final double permissibleError = 0;
+
+    public static final double L4Height = 0;
+    public static final double L3Height = 0;
+    public static final double L2Height = 0;
+    public static final double L1Height = 0;
+    public static final double bottomHeight = 0;
   }
 
   public static class ShooterConstants {
-    public static final int leftShooterID = 52;
-    public static final int rightShooterID = 53;
+    public static final int canandcolorID = 52;
+    public static final int leftShooterID = 53;
+    public static final int rightShooterID = 54;
 
     public static final boolean leftInverted = false;
     public static final boolean rightInverted = false;
@@ -174,10 +193,10 @@ public final class Constants {
     public static final double L1SpeedDifferential = 1;
   }
   
-  public static class TicklerConstants {
-    public static final int angleMotorID = 54;
-    public static final int spinMotorID = 55;
-    public static final int angleEncoderID = 56;
+  public static class HarvesterConstants {
+    public static final int angleMotorID = 55;
+    public static final int spinMotorID = 56;
+    public static final int angleEncoderID = 57;
 
     public static final boolean angleInverted = false;
     public static final boolean spinInverted = false;

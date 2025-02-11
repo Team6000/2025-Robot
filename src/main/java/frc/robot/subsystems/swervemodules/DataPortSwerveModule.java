@@ -76,7 +76,7 @@ public class DataPortSwerveModule extends SubsystemBase {
             .positionConversionFactor(DriveConstants.driveMetersPerEncRev)
             //set the output of the drive encoder to be in radians per second for velocity measurement
             .velocityConversionFactor(DriveConstants.driveMetersPerSecPerRPM);
-        driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
         steerConfig
             .inverted(steerMotorInverted)
@@ -91,7 +91,7 @@ public class DataPortSwerveModule extends SubsystemBase {
                  DriveConstants.steerkD);
         steerConfig.absoluteEncoder
             .zeroOffset(steerOffsetRadians / (2 * Math.PI));
-        steerMotor.configure(steerConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        steerMotor.configure(steerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         driveEncoder = driveMotor.getEncoder();
         steerEncoder = steerMotor.getEncoder();
@@ -223,12 +223,12 @@ public class DataPortSwerveModule extends SubsystemBase {
 
     public void setDriveCurrentLimit(int amps) {
         driveConfig.smartCurrentLimit(amps);
-        driveMotor.configure(driveConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+        driveMotor.configure(driveConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void setSteerCurrentLimit(int amps) {
         driveConfig.smartCurrentLimit(amps);
-        driveMotor.configure(driveConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+        driveMotor.configure(driveConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public void flashMotorConfigs() {
