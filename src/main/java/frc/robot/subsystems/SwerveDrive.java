@@ -81,10 +81,12 @@ public class SwerveDrive extends SubsystemBase {
         this.isFieldOriented = isFieldOriented;
     }
     public Command setFieldOrientedCommand(boolean isFieldOriented) {
-        return runOnce(() -> setFieldOriented(isFieldOriented));
+        return runOnce(() -> setFieldOriented(isFieldOriented))
+            .withName("Set Field Oriented: " + isFieldOriented);
     }
     public Command toggleFieldOrientedCommand() {
-        return runOnce(() -> setFieldOriented(!isFieldOriented));
+        return runOnce(() -> setFieldOriented(!isFieldOriented))
+            .withName("Toggle Field Oriented");
     }
 
     public double getSpeedFactor() {
@@ -102,8 +104,8 @@ public class SwerveDrive extends SubsystemBase {
     public Command speedUpCommand(double difference) {
         // Inline construction of command goes here.
         // Subsystem::RunOnce implicitly requires `this` subsystem.
-        return runOnce(
-            () -> setSpeedFactor(speedFactor+difference));
+        return runOnce(() -> setSpeedFactor(speedFactor+difference))
+            .withName("Speed Up");
     }
     /**
      * Increase driving speed by percentage
@@ -113,7 +115,9 @@ public class SwerveDrive extends SubsystemBase {
         // Inline construction of command goes here.
         // Subsystem::RunOnce implicitly requires `this` subsystem.
         return runOnce(
-            () -> setSpeedFactor(speedFactor-difference));
+            () -> setSpeedFactor(speedFactor-difference))
+            .withName("Slow Down");
+
     }
 
     public boolean isTracking() {
@@ -145,7 +149,7 @@ public class SwerveDrive extends SubsystemBase {
     public Command lockCommand() {
         // Inline construction of command goes here.
         // Subsystem::RunOnce implicitly requires `this` subsystem.
-        return runOnce(this::lock);
+        return runOnce(this::lock).withName("Lock");
     }
     
     /**
@@ -257,7 +261,8 @@ public class SwerveDrive extends SubsystemBase {
      * Sets the gyro heading to zero as a runOnce.
      */
     public Command resetHeadingCommand() {
-        return runOnce(this::resetHeading);
+        return runOnce(this::resetHeading)
+        .withName("Reset Heading");
     }
 
     /**
@@ -331,7 +336,7 @@ public class SwerveDrive extends SubsystemBase {
                         -rot
                     );
                 }
-        );
+            ).withName("Drive");
     }
 
     /**
@@ -404,7 +409,8 @@ public class SwerveDrive extends SubsystemBase {
                 frontRightMod.isTestMode(false);
                 backLeftMod.isTestMode(false);
                 backRightMod.isTestMode(false);
-            });
+            })
+            .withName("Encoders Test Mode");
     }
 
 

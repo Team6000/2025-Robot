@@ -19,25 +19,29 @@ public class Shooter extends SubsystemBase {
     public Command runSpeedCommand(double speed) {
         return startEnd(
             () -> shoot(speed), 
-            () -> shoot(0));
+            () -> shoot(0))
+            .withName("Speed: " + speed);
     }
 
     public Command shootL4() {
         return startEnd(
             () -> shoot(L4Speed), 
-            () -> shoot(0));
+            () -> shoot(0))
+            .withName("L4");
     }
 
     public Command shootMid() {
         return startEnd(
             () -> shoot(MidSpeed), 
-            () -> shoot(0));
+            () -> shoot(0))
+            .withName("Mid");
     }
 
     public Command shootL1() {
         return startEnd(
             () -> shootWithDifferential(L1Speed, L1SpeedDifferential), 
-            () -> shoot(0));
+            () -> shoot(0))
+            .withName("L1");
     }
 
     private void shoot(double speed) {

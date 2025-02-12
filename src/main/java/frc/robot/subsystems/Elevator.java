@@ -143,11 +143,13 @@ public class Elevator extends SubsystemBase {
                 
                 var voltage = feedforward.calculate(setpoint) + pid.calculate(mainEncoder.getPosition());
                 leader.set(voltage);
-            });
+            })
+            .withName(height.toString());
     }
 
     public Command goToFloorCommand() {
-        return Commands.none();
+        return Commands.none()
+            .withName("Floor");
     }
 
     @Override
@@ -178,15 +180,14 @@ public class Elevator extends SubsystemBase {
      * @param direction The direction (forward or reverse) to run the test in
      */
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return sysIdRoutine.quasistatic(direction);
+        return sysIdRoutine.quasistatic(direction).withName("Quasi " + direction);
     }
-
     /**
      * Returns a command that will execute a dynamic test in the given direction.
      *
      * @param direction The direction (forward or reverse) to run the test in
      */
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return sysIdRoutine.dynamic(direction);
+        return sysIdRoutine.dynamic(direction).withName("Dynamic " + direction);
     }
 }
