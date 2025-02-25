@@ -37,8 +37,8 @@ public class RobotContainer {
   private final CommandXboxController driverController =
     new CommandXboxController(ControllerConstants.driverControllerPort);
   @NotLogged
-  private final CommandXboxController codriverController =
-    new CommandXboxController(ControllerConstants.codriverControllerPort);
+  private final CommandXboxController operatorController =
+    new CommandXboxController(ControllerConstants.operatorControllerPort);
 
   // Initialize auto selector.
   private final SendableChooser<Command> autoSelector = new SendableChooser<Command>();
@@ -50,8 +50,13 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    SmartDashboard.putData("Elevator", elevator);
+    SmartDashboard.putData("Swerve", swerveDrive);
+
     SmartDashboard.putData("auto selector", autoSelector);
 
+    //copied from PP docs.
     SmartDashboard.putData(field);
     // Logging callback for current robot pose
     PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
@@ -98,7 +103,13 @@ public class RobotContainer {
 
     RobotModeTriggers.test().whileTrue(swerveDrive.encodersTestModeCommand());
 
-    // SmartDashboard.putData("swerve", swerveDrive);
+    operatorController.button(1).whileTrue(
+      elevator.goToReefHeightCommand(Elevator.Height.L1)
+      .onlyIf(harvester.isSafe)
+      .withName(null));
+    operatorController.button(2).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L2));
+    operatorController.button(3).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L3));
+    operatorController.button(4).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L4));
   }
 
   /**

@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.sim.SparkMaxSim;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -12,16 +14,20 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 
-
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -33,10 +39,12 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.ElevatorConstants.*;
 
-
+@Logged
 public class Elevator extends SubsystemBase {
     private static SparkMax leader = new SparkMax(leftID, MotorType.kBrushless);
     private static SparkMax follower = new SparkMax(rightID, MotorType.kBrushless);
+
+    private static SparkMaxSim leaderSim = new SparkMaxSim(leader, DCMotor.getNEO(1));
 
     private static SparkMaxConfig leaderConfig = new SparkMaxConfig();
     private static SparkMaxConfig followerConfig = new SparkMaxConfig();
@@ -52,7 +60,11 @@ public class Elevator extends SubsystemBase {
         new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration)
     );
 
-    private Height setpointHeight = Height.Floor;
+    private Height setpoint = Height.Floor;
+    @NotLogged
+    private TrapezoidProfile.State reference = new TrapezoidProfile.State();
+    @NotLogged
+    private Timer timer = new Timer();
     private boolean isMoving = false;
 
     public enum Height {
@@ -62,10 +74,10 @@ public class Elevator extends SubsystemBase {
         L1(L1Height),
         Floor(bottomHeight);
 
-        public final double heightSetpoint;
+        public final double height;
 
         Height(double setpoint) {
-            this.heightSetpoint = setpoint;
+            this.height = setpoint;
         }
     }
 
@@ -90,76 +102,92 @@ public class Elevator extends SubsystemBase {
             .inverted(rightInverted)
             .follow(leader);
         follower.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        this.setDefaultCommand(this.goToReefHeightCommand(Height.Floor));
     }
 
-    public boolean isMoving() {
+    public boolean getIsMoving() {
         return this.isMoving;
     }
 
-    public Trigger elevatorInMotion = new Trigger(this::isMoving);
+    public Trigger elevatorInMotion = new Trigger(this::getIsMoving);
 
-    public Height getCurrentHeight() {
-        return this.setpointHeight;
+    public Height getSetpoint() {
+        return this.setpoint;
     }
+    public double getCurrentHeight() {
+        return mainEncoder.getPosition();
+    }
+
+    public Trigger inHarvesterDangerZone = new Trigger(() -> mainEncoder.getPosition() < harvesterDangerZone);
 
     public Command goToReefHeightCommand(Height height) {
-        if (height == Height.Floor) {
-            throw new IllegalArgumentException("Use goToFloorCommand() to send the elevator to the lowest position.");
-        }
+        // if (height == Height.Floor) {
+        //     throw new IllegalArgumentException("Use goToFloorCommand() to send the elevator to the lowest position.");
+        // }
 
-        final double setpoint = height.heightSetpoint;
-        /* switch (height) {
-            case L4:
-                setpoint = L4Height;
-                break;
-            case L3:
-                setpoint = L3Height;
-                break;
-            case L2:
-                setpoint = L2Height;
-                break;
-            case L1:
-                setpoint = L1Height;
-                break;
-            case Floor:
-                throw new IllegalArgumentException("How did you even get here? ABORT IMMEDIATELY");
-            default:
-                throw new IllegalArgumentException("How did you even get here? ABORT IMMEDIATELY");
-        } */
-
-        return startRun(
+        return run(
             () -> {
-                this.isMoving = true;
-                this.setpointHeight = height;
-                pid.setGoal(setpoint);
-            }, 
-            () -> {
-                //neither are complete, just kinda sorta representative
-
-                //use trapezoidal profile etc
-                mainPIDController.setReference(setpoint, ControlType.kMAXMotionPositionControl);
-
-                //OR
-                
-                var voltage = feedforward.calculate(setpoint) + pid.calculate(mainEncoder.getPosition());
-                leader.set(voltage);
-            })
-            .withName(height.toString());
+                if (this.setpoint != height) {
+                    this.isMoving = true;
+                    this.setpoint = height;
+                    // pid.setGoal(setpoint);
+                    timer.reset();
+                }
+            }
+            // , () -> {}
+            ).withName(height.toString());
     }
 
+    /** thought this command might be necessary for special case of avoiding algae mech.
+      * this doesn't currently seem to be the case though *
     public Command goToFloorCommand() {
-        return Commands.none()
-            .withName("Floor");
+        return startEnd(
+            () -> {
+                if (this.setpoint != Height.Floor) {
+                    this.isMoving = true;
+                    this.setpoint = Height.Floor;
+                    // pid.setGoal(setpoint)
+                    timer.reset();
+                }
+            },
+            () -> {}
+            ).withName("Floor");
     }
+    */
 
     @Override
     public void periodic() {
+        //use trapezoidal profile etc
+        reference = motionProfile.calculate(
+            timer.get(), //time since new setpoint was commanded
+            new TrapezoidProfile.State(mainEncoder.getPosition(), mainEncoder.getVelocity()), //current state
+            new TrapezoidProfile.State(setpoint.height, 0)); //goal state
+        var ffout = feedforward.calculate(reference.velocity);
         
+        mainPIDController.setReference(
+            reference.position,
+            ControlType.kMAXMotionPositionControl,
+            ClosedLoopSlot.kSlot0, //default slot
+            ffout);
+
+        this.isMoving = !MathUtil.isNear(setpoint.height, mainEncoder.getPosition(), permissibleError);
+
+        leaderSim.iterate(reference.velocity, 12, 0.02);
+
+        SmartDashboard.putNumber("height", reference.position);
+
+        //OR
+        
+        // var voltage = feedforward.calculate(setpoint) + pid.calculate(mainEncoder.getPosition());
+        // leader.set(voltage);
+
     }
 
     private final MutVoltage appliedOutput = Volts.mutable(0);
     private final MutAngle angle = Radians.mutable(0);
     private final MutAngularVelocity velocity = RadiansPerSecond.mutable(0);
+    @NotLogged
     private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
         new SysIdRoutine.Config(),
         new SysIdRoutine.Mechanism(

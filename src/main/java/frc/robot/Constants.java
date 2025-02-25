@@ -22,7 +22,7 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static class ControllerConstants {
     public static final int driverControllerPort = 0;
-    public static final int codriverControllerPort = 1;
+    public static final int operatorControllerPort = 1;
     
     public static final double joystickDeadband = 0.15;
     public static final double triggerPressedThreshhold = 0.25;
@@ -170,11 +170,13 @@ public final class Constants {
     public static final double maxAcceleration = 0;
     public static final double permissibleError = 0;
 
-    public static final double L4Height = 0;
-    public static final double L3Height = 0;
-    public static final double L2Height = 0;
-    public static final double L1Height = 0;
+    public static final double L4Height = 444;
+    public static final double L3Height = 333;
+    public static final double L2Height = 222;
+    public static final double L1Height = 111;
     public static final double bottomHeight = 0;
+
+    public static final double harvesterDangerZone = 0;
   }
 
   public static class ShooterConstants {
@@ -209,6 +211,8 @@ public final class Constants {
 
     public static final double angleForwardLimit = 1000;
     public static final double angleReverseLimit = 1000;
+
+    public static final double dangerZone = 0;
   }
   
 }
