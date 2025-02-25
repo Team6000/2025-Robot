@@ -31,7 +31,7 @@ public class RobotContainer {
   private final SwerveDrive swerveDrive = new SwerveDrive();
   private final Elevator elevator = new Elevator();
   private final Shooter shooter = new Shooter();
-  private final Harvester harvester = new Harvester();
+  private final Scrubber scrubber = new Scrubber();
   
   @NotLogged
   private final CommandXboxController driverController =
@@ -105,7 +105,7 @@ public class RobotContainer {
 
     operatorController.button(1).whileTrue(
       elevator.goToReefHeightCommand(Elevator.Height.L1)
-      .onlyIf(harvester.isSafe)
+      .onlyIf(scrubber.isSafe)
       .withName(null));
     operatorController.button(2).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L2));
     operatorController.button(3).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L3));

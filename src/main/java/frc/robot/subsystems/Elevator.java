@@ -119,7 +119,7 @@ public class Elevator extends SubsystemBase {
         return mainEncoder.getPosition();
     }
 
-    public Trigger inHarvesterDangerZone = new Trigger(() -> mainEncoder.getPosition() < harvesterDangerZone);
+    public Trigger inScrubberDangerZone = new Trigger(() -> mainEncoder.getPosition() < scrubberDangerZone);
 
     public Command goToReefHeightCommand(Height height) {
         // if (height == Height.Floor) {

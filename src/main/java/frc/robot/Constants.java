@@ -176,7 +176,7 @@ public final class Constants {
     public static final double L1Height = 111;
     public static final double bottomHeight = 0;
 
-    public static final double harvesterDangerZone = 0;
+    public static final double scrubberDangerZone = 0;
   }
 
   public static class ShooterConstants {
@@ -195,7 +195,7 @@ public final class Constants {
     public static final double L1SpeedDifferential = 1;
   }
   
-  public static class HarvesterConstants {
+  public static class ScrubberConstants {
     public static final int angleMotorID = 55;
     public static final int spinMotorID = 56;
     public static final int angleEncoderID = 57;

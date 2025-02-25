@@ -26,7 +26,7 @@ REEFSCAPE robot code
   - [ ] Write infrastructure
   - [ ] Determine good speed
   - [ ] Redux Canandcolor - prevent elevator/coral collision
-- [ ] Algae Harvestor
+- [ ] Algae Scrubber
   - [ ] Write infrastructure
   - [ ] State tracking necessary?
   - [ ] Mostly operator-provided movement. Some location/setpoint control, see next

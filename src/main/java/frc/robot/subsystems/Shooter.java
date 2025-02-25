@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.ShooterConstants.*;
@@ -7,6 +8,7 @@ import static frc.robot.Constants.ShooterConstants.*;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.reduxrobotics.sensors.canandcolor.Canandcolor;
 
+@Logged
 public class Shooter extends SubsystemBase {
     private static VictorSPX leftShooter = new VictorSPX(leftShooterID);
     private static VictorSPX rightShooter = new VictorSPX(rightShooterID);
