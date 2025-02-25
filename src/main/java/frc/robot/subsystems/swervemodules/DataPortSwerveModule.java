@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
@@ -101,6 +102,12 @@ public class DataPortSwerveModule extends SubsystemBase {
 
         encoder = steerMotor.getAbsoluteEncoder();
     }
+
+    // @Override
+    // public void initSendable(SendableBuilder builder) {
+    //     builder.setSmartDashboardType("DataPortSwerveModule");
+    //     builder.addDoubleProperty("Angle (degrees)", this.getEncoderAngle()::getDegrees, null);
+    // }
     
     /**
     * Initializes the steer NEO's encoder to the value of the Canandmag, accounting for the offset.

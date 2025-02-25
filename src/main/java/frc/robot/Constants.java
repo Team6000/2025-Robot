@@ -181,8 +181,8 @@ public final class Constants {
 
   public static class ShooterConstants {
     public static final int canandcolorID = 52;
-    public static final int leftShooterID = 53;
-    public static final int rightShooterID = 54;
+    public static final int leftID = 53;
+    public static final int rightID = 54;
 
     public static final boolean leftInverted = false;
     public static final boolean rightInverted = false;

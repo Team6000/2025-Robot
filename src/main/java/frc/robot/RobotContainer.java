@@ -28,17 +28,17 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 @Logged
 public class RobotContainer {
   // Initialize subsystems.
-  private final SwerveDrive swerveDrive = new SwerveDrive();
+  // private final SwerveDrive swerveDrive = new SwerveDrive();
   private final Elevator elevator = new Elevator();
   private final Shooter shooter = new Shooter();
-  private final Scrubber scrubber = new Scrubber();
+  // private final Scrubber scrubber = new Scrubber();
   
   @NotLogged
   private final CommandXboxController driverController =
     new CommandXboxController(ControllerConstants.driverControllerPort);
-  @NotLogged
-  private final CommandXboxController operatorController =
-    new CommandXboxController(ControllerConstants.operatorControllerPort);
+  // @NotLogged
+  // private final CommandXboxController operatorController =
+  //   new CommandXboxController(ControllerConstants.operatorControllerPort);
 
   // Initialize auto selector.
   private final SendableChooser<Command> autoSelector = new SendableChooser<Command>();
@@ -51,8 +51,11 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
-    SmartDashboard.putData("Elevator", elevator);
-    SmartDashboard.putData("Swerve", swerveDrive);
+    /* I hate SD I don't understand why it makes my simulation crash */
+    // SmartDashboard.putData("Shooter", shooter);
+    // SmartDashboard.putData("Algae", scrubber);
+    // SmartDashboard.putData("Elevator", elevator);
+    // SmartDashboard.putData("Swerve", swerveDrive);
 
     SmartDashboard.putData("auto selector", autoSelector);
 
@@ -87,6 +90,7 @@ public class RobotContainer {
    private void configureBindings() {
     // Schedule `lock` when the Xbox controller's left trigger is beyond the threshold,
     // cancelling on release.
+    /* not everything is wired up
     driverController.leftTrigger(ControllerConstants.triggerPressedThreshhold).whileTrue(swerveDrive.lockCommand());
     driverController.y().onTrue(swerveDrive.speedUpCommand(0.1));
     driverController.a().onTrue(swerveDrive.slowDownCommand(0.1));
@@ -110,6 +114,13 @@ public class RobotContainer {
     operatorController.button(2).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L2));
     operatorController.button(3).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L3));
     operatorController.button(4).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L4));
+    */
+
+    driverController.b().onTrue(
+      elevator.getCurrentCommand()
+      .until(driverController.button(5).or(driverController.button(6)))
+    );
+    driverController.x().whileTrue(shooter.shootL1());
   }
 
   /**

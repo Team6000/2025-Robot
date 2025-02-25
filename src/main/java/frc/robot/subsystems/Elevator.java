@@ -24,6 +24,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.util.function.FloatSupplier;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,6 +40,8 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.ElevatorConstants.*;
+
+import java.util.function.DoubleSupplier;
 
 @Logged
 public class Elevator extends SubsystemBase {
@@ -106,6 +110,29 @@ public class Elevator extends SubsystemBase {
         this.setDefaultCommand(this.goToReefHeightCommand(Height.Floor));
     }
 
+    // @Override
+    // public void initSendable(SendableBuilder builder) {
+    //     builder.setSmartDashboardType("Subsystem");
+    //     builder.addBooleanProperty(".hasDefault", () -> getDefaultCommand() != null, null);
+    //     builder.addStringProperty(
+    //             ".default",
+    //             () -> getDefaultCommand() != null ? getDefaultCommand().getName() : "none",
+    //             null);
+    //     builder.addBooleanProperty(".hasCommand", () -> getCurrentCommand() != null, null);
+    //     builder.addStringProperty(
+    //             ".command",
+    //             () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "none",
+    //             null);
+
+    //     // addChild("pid", pid);
+    //     // builder.addFloatProperty(".test", ".test1", () -> {(Float)setpoint.height}, null);
+    //     // builder.addFloatProperty(".testttt", () -> (float)setpoint.height, null);
+
+
+    // }
+
+
+
     public boolean getIsMoving() {
         return this.isMoving;
     }
@@ -156,8 +183,29 @@ public class Elevator extends SubsystemBase {
     }
     */
 
+    public Command testAtHeightCommand() {
+        var key = "ELEVATOR TEST HEIGHT";
+        SmartDashboard.putNumber("ELEVATOR TEST HEIGHT", mainEncoder.getPosition());
+        return run(() -> {
+            var testsetpoint = SmartDashboard.getNumber(key, 0);
+            if (testsetpoint < 0) {
+                SmartDashboard.putNumber(key, testsetpoint = 0);
+                testsetpoint = 0;
+            }
+
+
+            if (mainEncoder.getPosition() < SmartDashboard.getNumber(key, 0)) {
+                leader.set(0.1);
+            } else {
+                leader.stopMotor();
+            }
+        });
+    }
+
     @Override
     public void periodic() {
+
+        /*
         //use trapezoidal profile etc
         reference = motionProfile.calculate(
             timer.get(), //time since new setpoint was commanded
@@ -181,6 +229,8 @@ public class Elevator extends SubsystemBase {
         
         // var voltage = feedforward.calculate(setpoint) + pid.calculate(mainEncoder.getPosition());
         // leader.set(voltage);
+
+        */
 
     }
 

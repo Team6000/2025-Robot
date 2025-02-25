@@ -19,7 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
-// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
@@ -413,11 +413,17 @@ public class SwerveDrive extends SubsystemBase {
             .withName("Encoders Test Mode");
     }
 
-
     /**
      * Create a new Swerve Drive, including 4 modules and a navX
      */
     public SwerveDrive() {
+        /* This isn't working and I don't understand why. Test on real bot? */
+        // addChild("Front Left", frontLeftMod);
+        // addChild("Front Right", frontRightMod);
+        // addChild("Rear Left", backLeftMod);
+        // addChild("Rear Right", backRightMod);
+        // SmartDashboard.putData(backLeftMod);
+
         Preferences.initDouble(speedFactorKey, speedFactor);
 
         try {
