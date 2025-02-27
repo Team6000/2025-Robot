@@ -151,7 +151,7 @@ public final class Constants {
     public static final int rightID = 51; /* follower */
 
     public static final boolean leftInverted = false;
-    public static final boolean rightInverted = false;
+    public static final boolean rightInverted = true;
 
     public static final int currentLimit = 50;
 
@@ -181,11 +181,11 @@ public final class Constants {
 
   public static class ShooterConstants {
     public static final int canandcolorID = 52;
-    public static final int leftID = 53;
-    public static final int rightID = 54;
+    public static final int leftID = 54;
+    public static final int rightID = 55;
 
     public static final boolean leftInverted = false;
-    public static final boolean rightInverted = false;
+    public static final boolean rightInverted = true;
 
     public static final int currentLimit = 50;
 

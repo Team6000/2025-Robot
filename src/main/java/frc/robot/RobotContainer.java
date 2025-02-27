@@ -117,10 +117,10 @@ public class RobotContainer {
     */
 
     driverController.b().onTrue(
-      elevator.getCurrentCommand()
-      .until(driverController.button(5).or(driverController.button(6)))
+      elevator.testAtHeightCommand()
+      .until(driverController.leftBumper().or(driverController.rightBumper()))
     );
-    driverController.x().whileTrue(shooter.shootL1());
+    driverController.x().whileTrue(shooter.shootL4());
   }
 
   /**

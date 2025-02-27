@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -88,17 +89,18 @@ public class Elevator extends SubsystemBase {
     public Elevator() {
         leaderConfig
             .inverted(leftInverted)
-            .smartCurrentLimit(currentLimit);
-        leaderConfig.softLimit
-            .forwardSoftLimit(forwardSoftLimit)
-            .reverseSoftLimit(reverseSoftLimit);
-        leaderConfig.closedLoop
-            .pidf(kP, kI, kD, kV);
-        leaderConfig.closedLoop.maxMotion
-                .maxVelocity(maxVelocity)
-                .maxAcceleration(maxAcceleration)
-                .allowedClosedLoopError(permissibleError)
-                .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+            .smartCurrentLimit(currentLimit)
+            .idleMode(IdleMode.kBrake);
+        // leaderConfig.softLimit
+        //     .forwardSoftLimit(forwardSoftLimit)
+        //     .reverseSoftLimit(reverseSoftLimit);
+        // leaderConfig.closedLoop
+        //     .pidf(kP, kI, kD, kV);
+        // leaderConfig.closedLoop.maxMotion
+        //         .maxVelocity(maxVelocity)
+        //         .maxAcceleration(maxAcceleration)
+        //         .allowedClosedLoopError(permissibleError)
+        //         .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
         leader.configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
         followerConfig
@@ -187,19 +189,21 @@ public class Elevator extends SubsystemBase {
         var key = "ELEVATOR TEST HEIGHT";
         SmartDashboard.putNumber("ELEVATOR TEST HEIGHT", mainEncoder.getPosition());
         return run(() -> {
-            var testsetpoint = SmartDashboard.getNumber(key, 0);
+            var testsetpoint = 142;
             if (testsetpoint < 0) {
                 SmartDashboard.putNumber(key, testsetpoint = 0);
                 testsetpoint = 0;
             }
 
-
-            if (mainEncoder.getPosition() < SmartDashboard.getNumber(key, 0)) {
+            System.out.println(testsetpoint);
+            if (mainEncoder.getPosition() < testsetpoint) {
                 leader.set(0.1);
             } else {
                 leader.stopMotor();
             }
-        });
+        })
+        .finallyDo(interrupted -> leader.stopMotor())
+        .withName("Test at height");
     }
 
     @Override
@@ -231,6 +235,8 @@ public class Elevator extends SubsystemBase {
         // leader.set(voltage);
 
         */
+
+        System.out.println(getCurrentCommand());
 
     }
 
