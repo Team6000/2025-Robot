@@ -51,7 +51,7 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
-    SmartDashboard.putData("Elevator", elevator);
+    // SmartDashboard.putData("Elevator", elevator);
     SmartDashboard.putData("Swerve", swerveDrive);
 
     SmartDashboard.putData("auto selector", autoSelector);

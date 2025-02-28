@@ -83,7 +83,6 @@ public class Elevator extends SubsystemBase {
 
     public Elevator() {
         leaderConfig
-            .inverted(leftInverted)
             .smartCurrentLimit(currentLimit);
         leaderConfig.softLimit
             .forwardSoftLimit(forwardSoftLimit)
@@ -99,8 +98,7 @@ public class Elevator extends SubsystemBase {
         
         followerConfig
             .apply(leaderConfig)
-            .inverted(rightInverted)
-            .follow(leader);
+            .follow(leader, true);
         follower.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         this.setDefaultCommand(this.goToReefHeightCommand(Height.Floor));
@@ -176,6 +174,7 @@ public class Elevator extends SubsystemBase {
         leaderSim.iterate(reference.velocity, 12, 0.02);
 
         SmartDashboard.putNumber("height", reference.position);
+        leader.configAccessor.getIdleMode();
 
         //OR
         
