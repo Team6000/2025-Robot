@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.Scrubber.flywheelDirection;
 
 import com.pathplanner.lib.util.PathPlannerLogging;
 
@@ -85,13 +86,14 @@ public class RobotContainer {
    * joysticks}.
    */
    private void configureBindings() {
-    // Schedule `lock` when the Xbox controller's left trigger is beyond the threshold,
-    // cancelling on release.
+    //Swerve
     driverController.leftTrigger(ControllerConstants.triggerPressedThreshhold).whileTrue(swerveDrive.lockCommand());
     driverController.y().onTrue(swerveDrive.speedUpCommand(0.1));
     driverController.a().onTrue(swerveDrive.slowDownCommand(0.1));
     driverController.back().onTrue(swerveDrive.toggleFieldOrientedCommand());
     driverController.start().onTrue(swerveDrive.resetHeadingCommand());
+
+    RobotModeTriggers.test().whileTrue(swerveDrive.encodersTestModeCommand());
 
     swerveDrive.setDefaultCommand(
         swerveDrive.driveCommand(
@@ -101,15 +103,28 @@ public class RobotContainer {
           )
     );
 
-    RobotModeTriggers.test().whileTrue(swerveDrive.encodersTestModeCommand());
-
+    //Elevator
     operatorController.button(1).whileTrue(
-      elevator.goToReefHeightCommand(Elevator.Height.L1)
-      .onlyIf(scrubber.isSafe)
-      .withName(null));
-    operatorController.button(2).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L2));
-    operatorController.button(3).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L3));
-    operatorController.button(4).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L4));
+      scrubber.evacuateCommand()
+      .andThen(elevator.reefHeightCommand(Elevator.Height.L1)));
+    operatorController.button(2).whileTrue(elevator.reefHeightCommand(Elevator.Height.L2));
+    operatorController.button(3).whileTrue(elevator.reefHeightCommand(Elevator.Height.L3));
+    operatorController.button(4).whileTrue(elevator.reefHeightCommand(Elevator.Height.L4));
+    //Scrubber
+    //Flywheel Forward
+    operatorController.button(0).onTrue(
+      scrubber.runFlywheelCommand(flywheelDirection.Forward)
+      .until(operatorController.button(0).negate()));
+    //Flywheel Reverse
+    operatorController.button(0).onTrue(
+      scrubber.runFlywheelCommand(flywheelDirection.Forward)
+      .until(operatorController.button(0).negate()));
+
+    scrubber.setDefaultCommand(
+      scrubber.manualAngleControl(operatorController::getRightX)
+    );
+
+    //Shooter
   }
 
   /**

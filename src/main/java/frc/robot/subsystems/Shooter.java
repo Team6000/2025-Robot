@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.ShooterConstants.*;
@@ -16,7 +17,9 @@ public class Shooter extends SubsystemBase {
     private static SparkMax left = new SparkMax(leftID, MotorType.kBrushed);
     private static SparkMax right = new SparkMax(rightID, MotorType.kBrushed);
 
+    @NotLogged
     private static SparkMaxConfig leftConfig = new SparkMaxConfig();
+    @NotLogged
     private static SparkMaxConfig rightConfig = new SparkMaxConfig();
 
     private static Canandcolor proximity = new Canandcolor(canandcolorID);

@@ -150,8 +150,8 @@ public final class Constants {
     public static final int leftID = 50; /* leader */
     public static final int rightID = 51; /* follower */
 
-    public static final boolean leftInverted = false;
-    public static final boolean rightInverted = false;
+    public static final boolean leftInverted = false; /* unused */
+    public static final boolean rightInverted = false; /* unused */
 
     public static final int currentLimit = 50;
 
@@ -196,23 +196,23 @@ public final class Constants {
   }
   
   public static class ScrubberConstants {
-    public static final int angleMotorID = 55;
-    public static final int spinMotorID = 56;
-    public static final int angleEncoderID = 57;
-
+    public static final int angleID = 52;
+    public static final int flywheelID = 53;
+    public static final int encoderChannel = 0;
+    
     public static final boolean angleInverted = false;
-    public static final boolean spinInverted = false;
+    public static final boolean flywheelInverted = false;
+    public static final boolean encoderInverted = false;
 
     public static final int angleCurrentLimit = 50;
-    public static final int spinCurrentLimit = 50;
+    public static final int flywheelCurrentLimit = 50;
 
-    public static final double angleRate = 1;
-    public static final double spinSpeed = 1;
+    public static final double angleFactor = 1;
+    public static final double evacuateRate = 1;
+    public static final double flywheelSpeed = 1;
 
-    public static final double angleForwardLimit = 1000;
-    public static final double angleReverseLimit = 1000;
-
-    public static final double dangerZone = 0;
+    public static final double angleBumperLimit = 15;
+    public static final double angleBackLimit = 50;
   }
   
 }

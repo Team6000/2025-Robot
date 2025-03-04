@@ -101,7 +101,7 @@ public class Elevator extends SubsystemBase {
             .follow(leader, true);
         follower.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        this.setDefaultCommand(this.goToReefHeightCommand(Height.Floor));
+        // this.setDefaultCommand(this.reefHeightCommand(Height.Floor));
     }
 
     public boolean getIsMoving() {
@@ -119,7 +119,7 @@ public class Elevator extends SubsystemBase {
 
     public Trigger inScrubberDangerZone = new Trigger(() -> mainEncoder.getPosition() < scrubberDangerZone);
 
-    public Command goToReefHeightCommand(Height height) {
+    public Command reefHeightCommand(Height height) {
         // if (height == Height.Floor) {
         //     throw new IllegalArgumentException("Use goToFloorCommand() to send the elevator to the lowest position.");
         // }
