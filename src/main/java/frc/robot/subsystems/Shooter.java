@@ -4,9 +4,12 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+
 import static frc.robot.Constants.ShooterConstants.*;
 
 import com.reduxrobotics.sensors.canandcolor.Canandcolor;
+import com.reduxrobotics.sensors.canandcolor.CanandcolorSettings;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -36,6 +39,24 @@ public class Shooter extends SubsystemBase {
         
         left.configure(leftConfig, null, null);
         right.configure(rightConfig, null, null);
+
+        // unsure if we actually need to change anything
+        // CanandcolorSettings settings =
+        //     new CanandcolorSettings()
+        //     .setLampLEDBrightness(100);
+        // proximity.setSettings(settings);
+
+    }
+
+    public boolean shooterClear() {
+        return proximity.getProximity() < coralDistance;
+    }
+
+    public Command basicCommand() {
+        return runOnce(() -> shoot(1))
+                .andThen(new WaitUntilCommand(this::shooterClear))
+                .andThen(() -> shoot(0))
+                .withName("standard");
     }
 
     public Command runSpeedCommand(double speed) {

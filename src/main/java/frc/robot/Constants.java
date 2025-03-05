@@ -189,6 +189,8 @@ public final class Constants {
 
     public static final int currentLimit = 50;
 
+    public static final int coralDistance = 100;
+
     public static final double L4Speed = 1;
     public static final double MidSpeed = 1;
     public static final double L1Speed = 1;
