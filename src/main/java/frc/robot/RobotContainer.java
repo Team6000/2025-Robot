@@ -9,6 +9,8 @@ import frc.robot.subsystems.*;
 
 import com.pathplanner.lib.util.PathPlannerLogging;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -51,6 +53,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
+    CameraServer.startAutomaticCapture();
+
     /* I hate SD I don't understand why it makes my simulation crash */
     // SmartDashboard.putData("Shooter", shooter);
     // SmartDashboard.putData("Algae", scrubber);
@@ -90,7 +94,7 @@ public class RobotContainer {
    private void configureBindings() {
     // Schedule `lock` when the Xbox controller's left trigger is beyond the threshold,
     // cancelling on release.
-    /* not everything is wired up */
+    /* not everything is wired up *
     driverController.leftTrigger(ControllerConstants.triggerPressedThreshhold).whileTrue(swerveDrive.lockCommand());
     driverController.y().onTrue(swerveDrive.speedUpCommand(0.1));
     driverController.a().onTrue(swerveDrive.slowDownCommand(0.1));
@@ -118,7 +122,7 @@ public class RobotContainer {
     operatorController.button(4).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L4));
     /* */
 
-    /* *
+    /* */
     driverController.y().onTrue(
       elevator.testAtHeightCommand()
       .until(driverController.leftBumper().or(driverController.rightBumper()))
@@ -131,10 +135,13 @@ public class RobotContainer {
     //   elevator.testPowerDownCommand()
     //   .until(driverController.leftBumper().or(driverController.rightBumper()))
     // );
-    driverController.x().whileTrue(shooter.shootL4());
-    //driverController.x().whileTrue(shooter.basicCommand());
+    // driverController.x().whileTrue(shooter.shootL4());
+    driverController.x().onTrue(
+      elevator.testPowerDownCommand()
+      .until(driverController.leftBumper().or(driverController.rightBumper()))
+    );
     driverController.a().whileTrue(elevator.disableBrakeModeCommand());
-    driverController.leftStick().onTrue(elevator.zeroHeightCommand());
+    driverController.leftStick().onTrue(elevator.setZeroCommand());
     /* */
   }
 

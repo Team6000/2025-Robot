@@ -72,6 +72,8 @@ public class Elevator extends SubsystemBase {
     private Timer timer = new Timer();
     private boolean isMoving = false;
 
+    private double testSpeed = 0.4;
+
     public enum Height {
         L4(L4Height),
         L3(L3Height),
@@ -217,7 +219,7 @@ public class Elevator extends SubsystemBase {
             }
             //System.out.println(follower.getMotorTemperature());
             if (mainEncoder.getPosition() < testsetpoint) {
-                leader.set(0.4);
+                leader.set(testSpeed);
             } else {
                 leader.stopMotor();
             }
@@ -237,7 +239,7 @@ public class Elevator extends SubsystemBase {
             }
             //System.out.println(follower.getMotorTemperature());
             if (mainEncoder.getPosition() < testsetpoint) {
-                leader.set(0.4);
+                leader.set(testSpeed);
             } else {
                 leader.stopMotor();
                 // leader.set(0.06);
@@ -251,14 +253,14 @@ public class Elevator extends SubsystemBase {
         // SmartDashboard.putNumber(key, mainEncoder.getPosition());
 
         return run(() -> {
-            var testsetpoint = 10;
+            var testsetpoint = 0;
             if (testsetpoint < 0) {
                 // SmartDashboard.putNumber(key, testsetpoint = 0);
                 testsetpoint = 0;
             }
             //System.out.println(follower.getMotorTemperature());
             if (mainEncoder.getPosition() > testsetpoint) {
-                leader.set(0.1);
+                leader.set(-testSpeed);
             } else {
                 leader.stopMotor();
                 // leader.set(0.06);
@@ -267,7 +269,7 @@ public class Elevator extends SubsystemBase {
         .finallyDo(interrupted -> leader.stopMotor())
         .withName("Test at height");
     }
-    public Command zeroHeightCommand() {
+    public Command setZeroCommand() {
         return runOnce(() -> mainEncoder.setPosition(0));
     }
 
