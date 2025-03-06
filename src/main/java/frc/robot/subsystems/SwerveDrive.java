@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.subsystems.swervemodules.CanCoderSwerveModule;
 import frc.robot.subsystems.swervemodules.DataPortSwerveModule;
 
 @Logged
@@ -34,7 +35,7 @@ public class SwerveDrive extends SubsystemBase {
     private boolean isTracking = false;
 
     // Initialize new swerve module objects
-    private final DataPortSwerveModule frontLeftMod = new DataPortSwerveModule(
+    private final CanCoderSwerveModule frontLeftMod = new CanCoderSwerveModule(
         1,
         DriveConstants.frontLeftDriveInverted,
         DriveConstants.frontLeftSteerInverted,
@@ -58,7 +59,7 @@ public class SwerveDrive extends SubsystemBase {
         DriveConstants.backRightSteerInverted,  
         DriveConstants.backRightModuleOffset);
 
-    private final AHRS navX = new AHRS(AHRS.NavXComType.kUSB1);
+    private final AHRS navX = new AHRS(AHRS.NavXComType.kMXP_SPI);
 
     // Odometry for the robot, measured in meters for linear motion and radians for
     // rotational motion
@@ -242,12 +243,21 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     /**
+     * Returns the current yaw of the robot from the gyro.
+     * 
+     * @return The current yaw of the robot.
+     */
+    public double getYawDegrees() {
+        return -navX.getYaw();
+    }
+
+    /**
      * Returns the current heading of the robot from the gyro.
      * 
      * @return The current heading of the robot.
      */
     public Rotation2d getHeading() {
-        return Rotation2d.fromDegrees(navX.getYaw());
+        return Rotation2d.fromDegrees(getYawDegrees());
     }
 
     /**
@@ -331,9 +341,9 @@ public class SwerveDrive extends SubsystemBase {
                     rot *= Math.abs(rot);
 
                     this.drive(
-                        -drive,
-                        -strafe,
-                        -rot
+                        drive,
+                        strafe,
+                        rot
                     );
                 }
             ).withName("Drive");
@@ -476,5 +486,15 @@ public class SwerveDrive extends SubsystemBase {
     public void periodic() {
         // Updates the odometry every 20ms
         odometry.update(getHeading(), getModulePositions());
+
+        SmartDashboard.putBoolean("oriented", isFieldOriented);
+
+        SmartDashboard.putNumber("yaw", getYawDegrees());
+
+        SmartDashboard.putNumber("flr", frontLeftMod.getSteerEncAngle().getDegrees());
+        SmartDashboard.putNumber("frr", frontRightMod.getSteerEncAngle().getDegrees());
+        SmartDashboard.putNumber("blr", backLeftMod.getSteerEncAngle().getDegrees());
+        SmartDashboard.putNumber("brr", backRightMod.getSteerEncAngle().getDegrees());
+
     }
 }

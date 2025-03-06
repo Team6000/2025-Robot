@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
@@ -44,6 +45,8 @@ public class DataPortSwerveModule extends SubsystemBase {
 
     private final Rotation2d offset;
 
+    private final int id;
+
     /**
      * Create a new SwerveModule, using an Absolute Encoder plugged into the Data Port of the STEER SparkMax.
      * 
@@ -62,6 +65,8 @@ public class DataPortSwerveModule extends SubsystemBase {
         int driveMotorID = moduleID+1;
         int steerMotorID = moduleID+2;
         // int encoderID = moduleID+3; //unnecessary because encoder is in SparkMAX data port
+
+        id = moduleID;
 
         offset = new Rotation2d(steerOffsetRadians);
         
@@ -91,7 +96,7 @@ public class DataPortSwerveModule extends SubsystemBase {
                  DriveConstants.steerkI,
                  DriveConstants.steerkD);
         steerConfig.absoluteEncoder
-            .zeroOffset(steerOffsetRadians / (2 * Math.PI));
+            .inverted(steerMotorInverted);
         steerMotor.configure(steerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         driveEncoder = driveMotor.getEncoder();
@@ -101,6 +106,7 @@ public class DataPortSwerveModule extends SubsystemBase {
         driveController = driveMotor.getClosedLoopController();
 
         encoder = steerMotor.getAbsoluteEncoder();
+        initSteerOffset();
     }
 
     // @Override
@@ -204,6 +210,8 @@ public class DataPortSwerveModule extends SubsystemBase {
         // Optimizes speed and angle to minimize change in heading
         // (e.g. module turns 1 degree and reverses drive direction to get from 90 degrees to -89 degrees)
         desiredState.optimize(getSteerEncAngle());
+
+        // SmartDashboard.putNumber(Integer.toString(id), desiredState.angle.getDegrees());
 
 
         steerController.setReference(

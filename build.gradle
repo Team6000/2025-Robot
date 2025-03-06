@@ -105,15 +105,15 @@ tasks.withType(JavaCompile) {
 }
 
 // Record time of compilation to src/main/java/frc/robot/BuildConstants.java (from 6328 Mechanical Advantage)
-project.compileJava.dependsOn(createVersionFile)
-gversion {
-  srcDir       = "src/main/java/"
-  classPackage = "frc.robot"
-  className    = "BuildConstants"
-  dateFormat   = "yyyy-MM-dd HH:mm:ss z"
-  timeZone     = "America/New_York" // Use preferred time zone
-  indent       = "  "
-}
+// project.compileJava.dependsOn(createVersionFile)
+// gversion {
+//   srcDir       = "src/main/java/"
+//   classPackage = "frc.robot"
+//   className    = "BuildConstants"
+//   dateFormat   = "yyyy-MM-dd HH:mm:ss z"
+//   timeZone     = "America/New_York" // Use preferred time zone
+//   indent       = "  "
+// }
 
 // If deploying on a branch called "event*", create new commit using the info recorded to BuildConstants.java (from 6328 Mechanical Advantage)
 task(eventDeploy) {

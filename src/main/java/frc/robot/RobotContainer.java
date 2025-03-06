@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 @Logged
 public class RobotContainer {
   // Initialize subsystems.
-  // private final SwerveDrive swerveDrive = new SwerveDrive();
+  private final SwerveDrive swerveDrive = new SwerveDrive();
   private final Elevator elevator = new Elevator();
   private final Shooter shooter = new Shooter();
   // private final Scrubber scrubber = new Scrubber();
@@ -57,10 +57,10 @@ public class RobotContainer {
     // SmartDashboard.putData("Elevator", elevator);
     // SmartDashboard.putData("Swerve", swerveDrive);
 
-    SmartDashboard.putData("auto selector", autoSelector);
+    // SmartDashboard.putData("auto selector", autoSelector);
 
     //copied from PP docs.
-    SmartDashboard.putData(field);
+    // SmartDashboard.putData(field);
     // Logging callback for current robot pose
     PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
       // Do whatever you want with the pose here
@@ -90,7 +90,7 @@ public class RobotContainer {
    private void configureBindings() {
     // Schedule `lock` when the Xbox controller's left trigger is beyond the threshold,
     // cancelling on release.
-    /* not everything is wired up
+    /* not everything is wired up */
     driverController.leftTrigger(ControllerConstants.triggerPressedThreshhold).whileTrue(swerveDrive.lockCommand());
     driverController.y().onTrue(swerveDrive.speedUpCommand(0.1));
     driverController.a().onTrue(swerveDrive.slowDownCommand(0.1));
@@ -100,12 +100,14 @@ public class RobotContainer {
     swerveDrive.setDefaultCommand(
         swerveDrive.driveCommand(
           () -> -deadband(driverController.getLeftY()),
-          () -> -deadband(driverController.getLeftX()),
-          () -> -deadband(driverController.getRightX())
+          () -> - deadband(driverController.getLeftX()),
+          () -> deadband(driverController.getRightX())
           )
     );
 
     RobotModeTriggers.test().whileTrue(swerveDrive.encodersTestModeCommand());
+
+    /*
 
     operatorController.button(1).whileTrue(
       elevator.goToReefHeightCommand(Elevator.Height.L1)
@@ -114,18 +116,32 @@ public class RobotContainer {
     operatorController.button(2).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L2));
     operatorController.button(3).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L3));
     operatorController.button(4).whileTrue(elevator.goToReefHeightCommand(Elevator.Height.L4));
-    */
+    /* */
 
-    driverController.b().onTrue(
+    /* *
+    driverController.y().onTrue(
       elevator.testAtHeightCommand()
       .until(driverController.leftBumper().or(driverController.rightBumper()))
     );
+    driverController.b().onTrue(
+      elevator.testMidHeightCommand()
+      .until(driverController.leftBumper().or(driverController.rightBumper()))
+    );
+    // driverController.x().onTrue(
+    //   elevator.testPowerDownCommand()
+    //   .until(driverController.leftBumper().or(driverController.rightBumper()))
+    // );
     driverController.x().whileTrue(shooter.shootL4());
+    //driverController.x().whileTrue(shooter.basicCommand());
+    driverController.a().whileTrue(elevator.disableBrakeModeCommand());
+    driverController.leftStick().onTrue(elevator.zeroHeightCommand());
+    /* */
   }
 
   /**
    * Deadbands inputs to eliminate tiny unwanted values from the joysticks or gamepad sticks.
 
+   
    * <p> If the distance between the input and zero is less than the deadband amount, the output will be zero.
    * Otherwise, the value will not change.
    * 

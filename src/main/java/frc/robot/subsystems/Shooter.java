@@ -1,12 +1,17 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import static frc.robot.Constants.ShooterConstants.*;
 
-// import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.reduxrobotics.sensors.canandcolor.Canandcolor;
+import com.reduxrobotics.sensors.canandcolor.CanandcolorSettings;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -14,15 +19,15 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 @Logged
 public class Shooter extends SubsystemBase {
-    // private static VictorSPX leftShooter = new VictorSPX(leftID);
-    // private static VictorSPX rightShooter = new VictorSPX(rightID);
     private static SparkMax left = new SparkMax(leftID, MotorType.kBrushed);
     private static SparkMax right = new SparkMax(rightID, MotorType.kBrushed);
 
+    @NotLogged
     private static SparkMaxConfig leftConfig = new SparkMaxConfig();
+    @NotLogged
     private static SparkMaxConfig rightConfig = new SparkMaxConfig();
 
-    // private static Canandcolor proximity = new Canandcolor(canandcolorID);
+    private static Canandcolor proximity = new Canandcolor(canandcolorID);
 
     public Shooter() {
         leftConfig
@@ -36,6 +41,31 @@ public class Shooter extends SubsystemBase {
         
         left.configure(leftConfig, null, null);
         right.configure(rightConfig, null, null);
+
+        // unsure if we actually need to change anything
+        // CanandcolorSettings settings =
+        //     new CanandcolorSettings()
+        //     .setLampLEDBrightness(100);
+        // proximity.setSettings(settings);
+
+        shooterClearTrigger.onFalse(runOnce(() -> {
+            shoot(0);
+        }));
+
+    }
+
+
+    public boolean shooterClear() {
+        return proximity.getProximity() < .015;
+    }
+
+    public Trigger shooterClearTrigger = new Trigger(this::shooterClear);
+
+    public Command basicCommand() {
+        return runOnce(() -> shoot(1))
+                // .andThen(new WaitUntilCommand(this::shooterClear))
+                // .andThen(() -> shoot(0))
+                .withName("standard");
     }
 
     public Command runSpeedCommand(double speed) {
@@ -47,7 +77,7 @@ public class Shooter extends SubsystemBase {
 
     public Command shootL4() {
         return startEnd(
-            () -> shoot(L4Speed), 
+            () -> shoot(L4Speed),
             () -> shoot(0))
             .withName("L4");
     }
@@ -78,5 +108,8 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putBoolean("cac present", proximity.isConnected());
+        SmartDashboard.putNumber("proximity", proximity.getProximity());
+        SmartDashboard.putBoolean("in_way", shooterClear());
     }
 }

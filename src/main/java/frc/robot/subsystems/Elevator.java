@@ -88,13 +88,14 @@ public class Elevator extends SubsystemBase {
 
     public Elevator() {
         leaderConfig
-            .inverted(leftInverted)
+            //.inverted(true)
             .smartCurrentLimit(currentLimit)
             .idleMode(IdleMode.kBrake);
         // leaderConfig.softLimit
         //     .forwardSoftLimit(forwardSoftLimit)
         //     .reverseSoftLimit(reverseSoftLimit);
         // leaderConfig.closedLoop
+
         //     .pidf(kP, kI, kD, kV);
         // leaderConfig.closedLoop.maxMotion
         //         .maxVelocity(maxVelocity)
@@ -104,9 +105,12 @@ public class Elevator extends SubsystemBase {
         leader.configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         
         followerConfig
-            .apply(leaderConfig)
-            .inverted(rightInverted)
-            .follow(leader);
+            //.apply(leaderConfig)
+            //.inverted(rightInverted)
+            .smartCurrentLimit(currentLimit)
+            .idleMode(IdleMode.kBrake)
+            .follow(leader,true);
+
         follower.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         this.setDefaultCommand(this.goToReefHeightCommand(Height.Floor));
@@ -168,6 +172,22 @@ public class Elevator extends SubsystemBase {
             ).withName(height.toString());
     }
 
+    public Command disableBrakeModeCommand() {
+        return startEnd(
+            () -> {
+                leaderConfig.idleMode(IdleMode.kCoast);
+                followerConfig.idleMode(IdleMode.kCoast);
+                leader.configure(leaderConfig, null, null);
+                follower.configure(followerConfig, null, null);
+            }, 
+            () -> {
+                leaderConfig.idleMode(IdleMode.kBrake);
+                followerConfig.idleMode(IdleMode.kBrake);
+                leader.configure(leaderConfig, null, null);
+                follower.configure(followerConfig, null, null);
+            });
+    }
+
     /** thought this command might be necessary for special case of avoiding algae mech.
       * this doesn't currently seem to be the case though *
     public Command goToFloorCommand() {
@@ -187,23 +207,68 @@ public class Elevator extends SubsystemBase {
 
     public Command testAtHeightCommand() {
         var key = "ELEVATOR TEST HEIGHT";
-        SmartDashboard.putNumber("ELEVATOR TEST HEIGHT", mainEncoder.getPosition());
+        // SmartDashboard.putNumber(key, mainEncoder.getPosition());
+
         return run(() -> {
-            var testsetpoint = 142;
+            var testsetpoint = 248;
             if (testsetpoint < 0) {
-                SmartDashboard.putNumber(key, testsetpoint = 0);
+                // SmartDashboard.putNumber(key, testsetpoint = 0);
                 testsetpoint = 0;
             }
-
-            System.out.println(testsetpoint);
+            //System.out.println(follower.getMotorTemperature());
             if (mainEncoder.getPosition() < testsetpoint) {
-                leader.set(0.1);
+                leader.set(0.4);
             } else {
                 leader.stopMotor();
             }
         })
         .finallyDo(interrupted -> leader.stopMotor())
         .withName("Test at height");
+    }
+    public Command testMidHeightCommand() {
+        var key = "ELEVATOR TEST HEIGHT";
+        // SmartDashboard.putNumber(key, mainEncoder.getPosition());
+
+        return run(() -> {
+            var testsetpoint = 146;
+            if (testsetpoint < 0) {
+                // SmartDashboard.putNumber(key, testsetpoint = 0);
+                testsetpoint = 0;
+            }
+            //System.out.println(follower.getMotorTemperature());
+            if (mainEncoder.getPosition() < testsetpoint) {
+                leader.set(0.4);
+            } else {
+                leader.stopMotor();
+                // leader.set(0.06);
+            }
+        })
+        .finallyDo(interrupted -> leader.stopMotor())
+        .withName("Test at height");
+    }
+    public Command testPowerDownCommand() {
+        var key = "ELEVATOR TEST HEIGHT";
+        // SmartDashboard.putNumber(key, mainEncoder.getPosition());
+
+        return run(() -> {
+            var testsetpoint = 10;
+            if (testsetpoint < 0) {
+                // SmartDashboard.putNumber(key, testsetpoint = 0);
+                testsetpoint = 0;
+            }
+            //System.out.println(follower.getMotorTemperature());
+            if (mainEncoder.getPosition() > testsetpoint) {
+                leader.set(0.1);
+            } else {
+                leader.stopMotor();
+                // leader.set(0.06);
+            }
+        })
+        .finallyDo(interrupted -> leader.stopMotor())
+        .withName("Test at height");
+    }
+    public Command zeroHeightCommand() {
+        return runOnce(() -> mainEncoder.setPosition(0));
     }
 
     @Override
@@ -236,7 +301,7 @@ public class Elevator extends SubsystemBase {
 
         */
 
-        System.out.println(getCurrentCommand());
+        System.out.println(mainEncoder.getPosition());
 
     }
 

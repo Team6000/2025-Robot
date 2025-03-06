@@ -47,32 +47,32 @@ public final class Constants {
     */
 
     /*
-    public static final int frontLeftDriveMotorId = 11;
-    public static final int frontLeftSteerMotorId = 12;
+    public static final int frontLeftDriveMotorId = 11; // Done
+    public static final int frontLeftSteerMotorId = 12; // Done
     public static final int frontLeftSteerEncoderId = 13;
 
-    public static final int frontRightDriveMotorId = 21;
-    public static final int frontRightSteerMotorId = 22;
-    public static final int frontRightSteerEncoderId = 23;
+    public static final int frontRightDriveMotorId = 21; //Done
+    public static final int frontRightSteerMotorId = 22; //Done
+    public static final int frontRightSteerEncoderId = 23; 
 
     public static final int rearLeftDriveMotorId = 31;
     public static final int rearLeftSteerMotorId = 32;
     public static final int rearLeftSteerEncoderId = 33;
 
-    public static final int rearRightDriveMotorId = 41;
-    public static final int rearRightSteerMotorId = 42;
+    public static final int rearRightDriveMotorId = 41; //Done
+    public static final int rearRightSteerMotorId = 42; //Done
     public static final int rearRightSteerEncoderId = 43;
     */
 
-    public static final boolean  frontLeftDriveInverted = false;
+    public static final boolean  frontLeftDriveInverted = true;
     public static final boolean frontRightDriveInverted = false;
-    public static final boolean   backLeftDriveInverted = false;
-    public static final boolean  backRightDriveInverted = false;
+    public static final boolean   backLeftDriveInverted = true;
+    public static final boolean  backRightDriveInverted = true;
 
-    public static final boolean  frontLeftSteerInverted = false;
-    public static final boolean frontRightSteerInverted = false;
-    public static final boolean   backLeftSteerInverted = false;
-    public static final boolean  backRightSteerInverted = false;
+    public static final boolean  frontLeftSteerInverted = true;
+    public static final boolean frontRightSteerInverted = true;
+    public static final boolean   backLeftSteerInverted = true;
+    public static final boolean  backRightSteerInverted = true;
 
     public static final double steerkP = 0.37431;
     public static final double steerkI = 0;
@@ -124,12 +124,12 @@ public final class Constants {
     public static final double steerMtrMaxSpeedRadPerSec = 2.0;
     public static final double steerMtrMaxAccelRadPerSecSq = 1.0;
 
-    public static final double maxDriveSpeedMetersPerSec = 5.0;
+    public static final double maxDriveSpeedMetersPerSec = 1.0;
     
-    public static final double frontLeftModuleOffset  = Units.degreesToRadians(33.35); //221
-    public static final double frontRightModuleOffset = Units.degreesToRadians(158.25); //162.5
-    public static final double backLeftModuleOffset   = Units.degreesToRadians(129.6); //125.4
-    public static final double backRightModuleOffset  = Units.degreesToRadians(325.5); //323.5
+    public static final double frontLeftModuleOffset  = Units.degreesToRadians(203.4);
+    public static final double frontRightModuleOffset = Units.degreesToRadians(0);
+    public static final double backLeftModuleOffset   = Units.degreesToRadians(0);
+    public static final double backRightModuleOffset  = Units.degreesToRadians(0);
 
     /**
      * The rate the robot will spin with full Rot command.
@@ -150,7 +150,7 @@ public final class Constants {
     public static final int leftID = 50; /* leader */
     public static final int rightID = 51; /* follower */
 
-    public static final boolean leftInverted = false;
+    public static final boolean leftInverted = false; //false
     public static final boolean rightInverted = true;
 
     public static final int currentLimit = 50;
@@ -170,8 +170,8 @@ public final class Constants {
     public static final double maxAcceleration = 0;
     public static final double permissibleError = 0;
 
-    public static final double L4Height = 444;
-    public static final double L3Height = 333;
+    public static final double L4Height = 248;
+    public static final double L3Height = 145;
     public static final double L2Height = 222;
     public static final double L1Height = 111;
     public static final double bottomHeight = 0;
@@ -181,33 +181,33 @@ public final class Constants {
 
   public static class ShooterConstants {
     public static final int canandcolorID = 52;
-    public static final int leftID = 54;
-    public static final int rightID = 55;
+    public static final int leftID = 53;
+    public static final int rightID = 54;
 
     public static final boolean leftInverted = false;
     public static final boolean rightInverted = true;
 
     public static final int currentLimit = 50;
 
-    public static final double L4Speed = 1;
+    public static final double L4Speed = 0.75;
     public static final double MidSpeed = 1;
     public static final double L1Speed = 1;
     public static final double L1SpeedDifferential = 1;
   }
   
   public static class ScrubberConstants {
-    public static final int angleMotorID = 55;
-    public static final int spinMotorID = 56;
-    public static final int angleEncoderID = 57;
+    public static final int angleID = 55;
+    public static final int flywheelID = 56;
+    public static final int encoderChannel = 0;
 
     public static final boolean angleInverted = false;
-    public static final boolean spinInverted = false;
+    public static final boolean flywheelInverted = false;
 
     public static final int angleCurrentLimit = 50;
-    public static final int spinCurrentLimit = 50;
+    public static final int flywheelCurrentLimit = 50;
 
     public static final double angleRate = 1;
-    public static final double spinSpeed = 1;
+    public static final double flywheelSpeed = 1;
 
     public static final double angleForwardLimit = 1000;
     public static final double angleReverseLimit = 1000;
