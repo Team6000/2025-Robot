@@ -148,7 +148,7 @@ public final class Constants {
 
   public static class ElevatorConstants {
     public static final int leftID = 50; /* leader */
-    public static final int rightID = 51; /* follower */
+    public static final int rightID = 53; /* follower */
 
     public static final boolean leftInverted = false; /* unused */
     public static final boolean rightInverted = false; /* unused */
@@ -170,18 +170,18 @@ public final class Constants {
     public static final double maxAcceleration = 0;
     public static final double permissibleError = 0;
 
-    public static final double L4Height = 444;
-    public static final double L3Height = 333;
-    public static final double L2Height = 222;
-    public static final double L1Height = 111;
+    public static final double L4Height = 248;
+    public static final double L3Height = 146;
+    public static final double L2Height = 0;
+    public static final double L1Height = 0;
     public static final double bottomHeight = 0;
 
     public static final double scrubberDangerZone = 0;
   }
 
   public static class ShooterConstants {
-    public static final int leftID = 54;
-    public static final int rightID = 55;
+    public static final int leftID = 51;
+    public static final int rightID = 52;
     public static final int canandcolorID = 56;
 
     public static final boolean leftInverted = false;
@@ -198,8 +198,8 @@ public final class Constants {
   }
   
   public static class ScrubberConstants {
-    public static final int angleID = 52;
-    public static final int flywheelID = 53;
+    public static final int angleID = 54;
+    public static final int flywheelID = 55;
     public static final int encoderChannel = 0;
     
     public static final boolean angleInverted = false;

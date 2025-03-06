@@ -2,6 +2,7 @@
 package frc.robot.subsystems;
 
 
+import com.fasterxml.jackson.databind.deser.impl.SetterlessProperty;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -117,6 +118,17 @@ public class Elevator extends SubsystemBase {
         return mainEncoder.getPosition();
     }
 
+    public double remainingTimeToGoal() {
+        //hope this works?
+        return motionProfile.timeLeftUntil(setpoint.height);
+    }
+    public double totalTimeToGoal() {
+        return motionProfile.totalTime();
+    }
+    public boolean isAtSetpoint() {
+        return motionProfile.isFinished(timer.get());
+    }
+
     public Trigger inScrubberDangerZone = new Trigger(() -> mainEncoder.getPosition() < scrubberDangerZone);
 
     public Command reefHeightCommand(Height height) {
@@ -158,7 +170,8 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         //use trapezoidal profile etc
         reference = motionProfile.calculate(
-            timer.get(), //time since new setpoint was commanded
+            // timer.get(), //time since new setpoint was commanded
+            0.02, //20ms
             new TrapezoidProfile.State(mainEncoder.getPosition(), mainEncoder.getVelocity()), //current state
             new TrapezoidProfile.State(setpoint.height, 0)); //goal state
         var ffout = feedforward.calculate(reference.velocity);

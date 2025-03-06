@@ -5,6 +5,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static frc.robot.Constants.ShooterConstants.*;
 
@@ -27,6 +28,8 @@ public class Shooter extends SubsystemBase {
 
     private static Canandcolor proximity = new Canandcolor(canandcolorID);
 
+    private static boolean hasCoral = false;
+
     public Shooter() {
         leftConfig
             .inverted(leftInverted)
@@ -46,17 +49,28 @@ public class Shooter extends SubsystemBase {
         //     .setLampLEDBrightness(100);
         // proximity.setSettings(settings);
 
+        // stop when we have successful intake
+        shooterClearTrigger.onFalse(runOnce(() -> {
+            shoot(0);
+            hasCoral = true;
+        }));
+
     }
 
-    public boolean shooterClear() {
-        return proximity.getProximity() < coralDistance;
+    public boolean clearOfElevator() {
+        return proximity.getProximity() < .015;
     }
+
+    public Trigger shooterClearTrigger = new Trigger(this::clearOfElevator);
 
     public Command basicCommand() {
-        return runOnce(() -> shoot(1))
-                .andThen(new WaitUntilCommand(this::shooterClear))
-                .andThen(() -> shoot(0))
-                .withName("standard");
+        return runOnce(() -> {
+            shoot(1);
+            hasCoral = false;
+        })
+        // .andThen(new WaitUntilCommand(this::shooterClear))
+        // .andThen(() -> shoot(0))
+        .withName("standard");
     }
 
     public Command runSpeedCommand(double speed) {
