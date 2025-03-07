@@ -146,6 +146,26 @@ public final class Constants {
     public static RobotConfig PPRobotConfig;
   }
 
+  public static final class AutoAimConstants {
+    public static final double kP = 0.004537;
+    public static final double kI = 0.0000;
+    public static final double kD = 0.000;
+
+    public static final double AutoAimPIDTolerance = 1.0;
+    // public static final double DeflectorPosInValue = 0.0;
+    // public static final double DeflectorPosOutValue = 0.0;
+  }
+
+  public static final class AutoFollowConstants {
+    public static final double kP = 0.271;
+    public static final double kI = 0;
+    public static final double kD = 0.0;
+
+    public static final double AutoFollowPIDTolerance = 1.0;
+    // public static final double DeflectorPosInValue = 0.0;
+    // public static final double DeflectorPosOutValue = 0.0;
+  }
+
   public static class ElevatorConstants {
     public static final int leftID = 50; /* leader */
     public static final int rightID = 53; /* follower */

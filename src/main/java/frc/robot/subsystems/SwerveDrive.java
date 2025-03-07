@@ -77,7 +77,7 @@ public class SwerveDrive extends SubsystemBase {
     public boolean isFieldOriented() {
         return isFieldOriented;
     }
-    private void setFieldOriented(boolean isFieldOriented) {
+    public void setFieldOriented(boolean isFieldOriented) {
         this.isFieldOriented = isFieldOriented;
     }
     public Command setFieldOrientedCommand(boolean isFieldOriented) {
