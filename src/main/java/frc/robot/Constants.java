@@ -66,7 +66,7 @@ public final class Constants {
 
     public static final boolean  frontLeftDriveInverted = false;
     public static final boolean frontRightDriveInverted = true;
-    public static final boolean   backLeftDriveInverted = true;
+    public static final boolean   backLeftDriveInverted = false;
     public static final boolean  backRightDriveInverted = true;
 
     public static final boolean  frontLeftSteerInverted = true;
@@ -124,12 +124,12 @@ public final class Constants {
     public static final double steerMtrMaxSpeedRadPerSec = 2.0;
     public static final double steerMtrMaxAccelRadPerSecSq = 1.0;
 
-    public static final double maxDriveSpeedMetersPerSec = 5.0;
+    public static final double maxDriveSpeedMetersPerSec = 1.0; //Benjy was here 5
     
-    public static final double frontLeftModuleOffset  = Units.degreesToRadians(33.35); //221
-    public static final double frontRightModuleOffset = Units.degreesToRadians(158.25); //162.5
-    public static final double backLeftModuleOffset   = Units.degreesToRadians(129.6); //125.4
-    public static final double backRightModuleOffset  = Units.degreesToRadians(325.5); //323.5
+    public static final double frontLeftModuleOffset  = Units.degreesToRadians(203.4);
+    public static final double frontRightModuleOffset = Units.degreesToRadians(0);
+    public static final double backLeftModuleOffset   = Units.degreesToRadians(0);
+    public static final double backRightModuleOffset  = Units.degreesToRadians(0);
 
     /**
      * The rate the robot will spin with full Rot command.
@@ -171,7 +171,7 @@ public final class Constants {
     public static final int rightID = 53; /* follower */
 
     public static final boolean leftInverted = false; /* unused */
-    public static final boolean rightInverted = false; /* unused */
+    public static final boolean rightInverted = true; /* unused */
 
     public static final int currentLimit = 50;
 
@@ -211,7 +211,7 @@ public final class Constants {
 
     public static final int coralDistance = 100;
 
-    public static final double L4Speed = 1;
+    public static final double L4Speed = 1; //0.75??
     public static final double MidSpeed = 1;
     public static final double L1Speed = 1;
     public static final double L1SpeedDifferential = 1;
@@ -233,6 +233,7 @@ public final class Constants {
     public static final double evacuateRate = 1;
     public static final double flywheelSpeed = 1;
 
+    public static final double angleTopLimit = 0;
     public static final double angleBumperLimit = 15;
     public static final double angleBackLimit = 50;
   }

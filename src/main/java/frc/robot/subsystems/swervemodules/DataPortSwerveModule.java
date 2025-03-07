@@ -26,8 +26,8 @@ public class DataPortSwerveModule extends SubsystemBase {
     private final SparkMax driveMotor;
     private final SparkMax steerMotor;
 
-    private final RelativeEncoder driveEncoder;
-    private final RelativeEncoder steerEncoder;
+    private final RelativeEncoder driveRelEncoder;
+    private final RelativeEncoder steerRelEncoder;
 
     @NotLogged
     private final SparkClosedLoopController driveController;
@@ -39,7 +39,7 @@ public class DataPortSwerveModule extends SubsystemBase {
     @NotLogged
     private final SparkMaxConfig steerConfig = new SparkMaxConfig();
 
-    private final AbsoluteEncoder encoder;
+    private final AbsoluteEncoder absEncoder;
 
     private final Rotation2d offset;
 
@@ -90,23 +90,26 @@ public class DataPortSwerveModule extends SubsystemBase {
                  DriveConstants.steerkI,
                  DriveConstants.steerkD);
         steerConfig.absoluteEncoder
-            .zeroOffset(steerOffsetRadians / (2 * Math.PI));
+            // .zeroOffset(steerOffsetRadians / (2 * Math.PI))
+            .inverted(steerMotorInverted);
         steerMotor.configure(steerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        driveEncoder = driveMotor.getEncoder();
-        steerEncoder = steerMotor.getEncoder();
+        driveRelEncoder = driveMotor.getEncoder();
+        steerRelEncoder = steerMotor.getEncoder();
 
         steerController = steerMotor.getClosedLoopController();
         driveController = driveMotor.getClosedLoopController();
 
-        encoder = steerMotor.getAbsoluteEncoder();
+        absEncoder = steerMotor.getAbsoluteEncoder();
+
+        initSteerOffset();
     }
     
     /**
     * Initializes the steer NEO's encoder to the value of the Canandmag, accounting for the offset.
     */
     public void initSteerOffset() {
-       steerEncoder.setPosition(getEncoderAngle().getRadians());
+       steerRelEncoder.setPosition(getAbsoluteEncoderAngle().getRadians());
     }
     
     /**
@@ -114,9 +117,9 @@ public class DataPortSwerveModule extends SubsystemBase {
      * 
      * @return The current angle of the wheel
      */
-    public Rotation2d getEncoderAngle() {
+    public Rotation2d getAbsoluteEncoderAngle() {
         double unsignedAngle =
-            (Units.rotationsToRadians(encoder.getPosition())); // % (2 * Math.PI);
+            (Units.rotationsToRadians(absEncoder.getPosition())); // % (2 * Math.PI);
         return new Rotation2d(unsignedAngle);
     }
 
@@ -127,14 +130,14 @@ public class DataPortSwerveModule extends SubsystemBase {
      */
     public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        driveEncoder.getPosition(), getEncoderAngle());
+        driveRelEncoder.getPosition(), getAbsoluteEncoderAngle());
     }
 
     /**
      * Resets the distance traveled by the module.
      */
     public void resetDistance() {
-        driveEncoder.setPosition(0.0);
+        driveRelEncoder.setPosition(0.0);
     }
 
     /**
@@ -143,7 +146,7 @@ public class DataPortSwerveModule extends SubsystemBase {
      * @return The current drive distance of the module.
      */
     public double getDriveDistanceMeters() {
-        return driveEncoder.getPosition();
+        return driveRelEncoder.getPosition();
     }
 
     /**
@@ -152,7 +155,7 @@ public class DataPortSwerveModule extends SubsystemBase {
      * @return The current absolute angle of the module.
      */
     public Rotation2d getSteerEncAngle() {
-        return new Rotation2d(steerEncoder.getPosition());
+        return new Rotation2d(steerRelEncoder.getPosition());
     }
 
     /**
@@ -161,11 +164,11 @@ public class DataPortSwerveModule extends SubsystemBase {
      * @return The current velocity of the module in meters per second.
      */
     public double getCurrentVelocityMetersPerSecond() {
-        return driveEncoder.getVelocity();
+        return driveRelEncoder.getVelocity();
     }
 
     public double getRelativeVelocityMetersPerSecond(double thetaRad) {
-        double rel = getEncoderAngle().getDegrees() % 90.0;
+        double rel = getAbsoluteEncoderAngle().getDegrees() % 90.0;
         if(rel > 90.0 && rel < 270.0) rel *= -1.0;
         return getCurrentVelocityMetersPerSecond() * (rel / 90.0);
     }

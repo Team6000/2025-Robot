@@ -29,8 +29,8 @@ public class CanCoderSwerveModule extends SubsystemBase {
     private final SparkMax driveMotor;
     private final SparkMax steerMotor;
 
-    private final RelativeEncoder driveEncoder;
-    private final RelativeEncoder steerEncoder;
+    private final RelativeEncoder driveRelEncoder;
+    private final RelativeEncoder steerRelEncoder;
 
     @NotLogged
     private final SparkClosedLoopController driveController;
@@ -93,8 +93,8 @@ public class CanCoderSwerveModule extends SubsystemBase {
                  DriveConstants.steerkD);
         steerMotor.configure(steerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        driveEncoder = driveMotor.getEncoder();
-        steerEncoder = steerMotor.getEncoder();
+        driveRelEncoder = driveMotor.getEncoder();
+        steerRelEncoder = steerMotor.getEncoder();
 
         steerController = steerMotor.getClosedLoopController();
         driveController = driveMotor.getClosedLoopController();
@@ -114,7 +114,7 @@ public class CanCoderSwerveModule extends SubsystemBase {
     * Initializes the steer motor encoder to the value of the CANCoder, accounting for the offset.
     */
     public void initSteerOffset() {
-       steerEncoder.setPosition(getCanCoderAngle().getRadians());
+       steerRelEncoder.setPosition(getCanCoderAngle().getRadians());
     }
     
     /**
@@ -138,14 +138,14 @@ public class CanCoderSwerveModule extends SubsystemBase {
      */
     public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-        driveEncoder.getPosition(), getCanCoderAngle());
+        driveRelEncoder.getPosition(), getCanCoderAngle());
     }
 
     /**
      * Resets the distance traveled by the module.
      */
     public void resetDistance() {
-        driveEncoder.setPosition(0.0);
+        driveRelEncoder.setPosition(0.0);
     }
 
     /**
@@ -154,7 +154,7 @@ public class CanCoderSwerveModule extends SubsystemBase {
      * @return The current drive distance of the module.
      */
     public double getDriveDistanceMeters() {
-        return driveEncoder.getPosition();
+        return driveRelEncoder.getPosition();
     }
 
     /**
@@ -163,7 +163,7 @@ public class CanCoderSwerveModule extends SubsystemBase {
      * @return The current absolute angle of the module.
      */
     public Rotation2d getSteerEncAngle() {
-        return new Rotation2d(steerEncoder.getPosition());
+        return new Rotation2d(steerRelEncoder.getPosition());
     }
 
     /**
@@ -172,7 +172,7 @@ public class CanCoderSwerveModule extends SubsystemBase {
      * @return The current velocity of the module in meters per second.
      */
     public double getCurrentVelocityMetersPerSecond() {
-        return driveEncoder.getVelocity();
+        return driveRelEncoder.getVelocity();
     }
 
     public double getRelativeVelocityMetersPerSecond(double thetaRad) {

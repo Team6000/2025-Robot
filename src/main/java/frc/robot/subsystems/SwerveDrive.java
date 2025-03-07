@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -247,7 +248,7 @@ public class SwerveDrive extends SubsystemBase {
      * @return The current heading of the robot.
      */
     public Rotation2d getHeading() {
-        return Rotation2d.fromDegrees(navX.getYaw());
+        return Rotation2d.fromDegrees(-navX.getYaw());
     }
 
     /**
@@ -470,5 +471,7 @@ public class SwerveDrive extends SubsystemBase {
     public void periodic() {
         // Updates the odometry every 20ms
         odometry.update(getHeading(), getModulePositions());
+        SmartDashboard.putNumber("Angle", navX.getYaw());
+        SmartDashboard.putBoolean("Field_Orient", isFieldOriented());
     }
 }

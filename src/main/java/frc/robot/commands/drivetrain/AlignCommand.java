@@ -23,7 +23,6 @@ public class AlignCommand extends Command {
   boolean interrupted;
 
   private PIDController TranslatePID = new PIDController(
-
       Constants.AutoFollowConstants.kP,
       Constants.AutoFollowConstants.kI,
       Constants.AutoFollowConstants.kD);
@@ -32,8 +31,8 @@ public class AlignCommand extends Command {
       Constants.AutoAimConstants.kP,
       Constants.AutoAimConstants.kI,
       Constants.AutoAimConstants.kD);
-  private PIDController StrafePID = new PIDController(
 
+  private PIDController StrafePID = new PIDController(
       Constants.AutoFollowConstants.kP,
       Constants.AutoFollowConstants.kI,
       Constants.AutoFollowConstants.kD);
@@ -68,9 +67,6 @@ public class AlignCommand extends Command {
     addRequirements(s_Swerve);
     addRequirements(l_LimelightSubsystem);
 
-    TranslatePID.setTolerance(0.01);
-    StrafePID.setTolerance(0.01);
-    RotatePID.setTolerance(1);
   }
 
   // Called when the command is initially scheduled.
@@ -86,6 +82,10 @@ public class AlignCommand extends Command {
     TranslatePID.setSetpoint(x);
     StrafePID.setSetpoint(z);
     RotatePID.setSetpoint(ry);
+    TranslatePID.setTolerance(0.01);
+    StrafePID.setTolerance(0.01);
+    RotatePID.setTolerance(1);
+
     
 
     double x =  l_LimelightSubsystem.getTargetPos(0);
