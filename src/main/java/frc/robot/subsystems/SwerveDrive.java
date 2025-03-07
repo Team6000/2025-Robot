@@ -58,7 +58,7 @@ public class SwerveDrive extends SubsystemBase {
         DriveConstants.backRightSteerInverted,  
         DriveConstants.backRightModuleOffset);
 
-    private final AHRS navX = new AHRS(AHRS.NavXComType.kUSB1);
+    private final AHRS navX = new AHRS(AHRS.NavXComType.kMXP_SPI);
 
     // Odometry for the robot, measured in meters for linear motion and radians for
     // rotational motion

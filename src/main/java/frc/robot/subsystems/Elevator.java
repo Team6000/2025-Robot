@@ -25,6 +25,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -88,8 +89,8 @@ public class Elevator extends SubsystemBase {
         leaderConfig.softLimit
             .forwardSoftLimit(forwardSoftLimit)
             .reverseSoftLimit(reverseSoftLimit);
-        leaderConfig.closedLoop
-            .pidf(kP, kI, kD, kV);
+        // leaderConfig.closedLoop
+        //     .pidf(kP, kI, kD, kV);
         leaderConfig.closedLoop.maxMotion
                 .maxVelocity(maxVelocity)
                 .maxAcceleration(maxAcceleration)
@@ -168,6 +169,7 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
+        /*
         //use trapezoidal profile etc
         reference = motionProfile.calculate(
             // timer.get(), //time since new setpoint was commanded
@@ -193,7 +195,13 @@ public class Elevator extends SubsystemBase {
         
         // var voltage = feedforward.calculate(setpoint) + pid.calculate(mainEncoder.getPosition());
         // leader.set(voltage);
+        */
 
+    }
+
+    private void setVoltage(Voltage voltage) {
+        leader.setVoltage(voltage);
+        follower.setVoltage(voltage);
     }
 
     private final MutVoltage appliedOutput = Volts.mutable(0);
@@ -203,7 +211,7 @@ public class Elevator extends SubsystemBase {
     private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
         new SysIdRoutine.Config(),
         new SysIdRoutine.Mechanism(
-            leader::setVoltage,
+            this::setVoltage,
             log -> {
                 log.motor("elevator")
                     .voltage(

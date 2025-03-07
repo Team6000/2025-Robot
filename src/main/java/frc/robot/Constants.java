@@ -65,21 +65,21 @@ public final class Constants {
     */
 
     public static final boolean  frontLeftDriveInverted = false;
-    public static final boolean frontRightDriveInverted = false;
-    public static final boolean   backLeftDriveInverted = false;
-    public static final boolean  backRightDriveInverted = false;
+    public static final boolean frontRightDriveInverted = true;
+    public static final boolean   backLeftDriveInverted = true;
+    public static final boolean  backRightDriveInverted = true;
 
-    public static final boolean  frontLeftSteerInverted = false;
-    public static final boolean frontRightSteerInverted = false;
-    public static final boolean   backLeftSteerInverted = false;
-    public static final boolean  backRightSteerInverted = false;
+    public static final boolean  frontLeftSteerInverted = true;
+    public static final boolean frontRightSteerInverted = true;
+    public static final boolean   backLeftSteerInverted = true;
+    public static final boolean  backRightSteerInverted = true;
 
     public static final double steerkP = 0.37431;
     public static final double steerkI = 0;
     public static final double steerkD = 0;
 
-    public static final int driveCurrentLimitAmps = 35;
-    public static final int steerCurrentLimitAmps = 25;
+    public static final int driveCurrentLimitAmps = 50;
+    public static final int steerCurrentLimitAmps = 40;
     
     /**
      * The track width from wheel center to wheel center.
@@ -155,8 +155,8 @@ public final class Constants {
 
     public static final int currentLimit = 50;
 
-    public static final double forwardSoftLimit = 100;
-    public static final double reverseSoftLimit = 100;
+    public static final double forwardSoftLimit = 248;
+    public static final double reverseSoftLimit = 0;
 
     public static final double kS = 0;
     public static final double kG = 0;

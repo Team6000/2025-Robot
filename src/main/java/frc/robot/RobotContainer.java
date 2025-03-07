@@ -8,6 +8,8 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Scrubber.flywheelDirection;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.epilogue.Logged;
@@ -19,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -42,7 +45,7 @@ public class RobotContainer {
     new CommandXboxController(ControllerConstants.operatorControllerPort);
 
   // Initialize auto selector.
-  private final SendableChooser<Command> autoSelector = new SendableChooser<Command>();
+  private final SendableChooser<Command> autoSelector = AutoBuilder.buildAutoChooser();
 
   // Create Field2d object to put on Dashboard
   private final Field2d field = new Field2d();
@@ -86,6 +89,7 @@ public class RobotContainer {
    * joysticks}.
    */
    private void configureBindings() {
+    /* */
     //Swerve
     driverController.leftTrigger(ControllerConstants.triggerPressedThreshhold).whileTrue(swerveDrive.lockCommand());
     driverController.y().onTrue(swerveDrive.speedUpCommand(0.1));
@@ -102,6 +106,8 @@ public class RobotContainer {
           () -> -deadband(driverController.getRightX())
           )
     );
+
+    /*
 
     //Elevator
     operatorController.button(1).whileTrue(
@@ -125,6 +131,12 @@ public class RobotContainer {
     );
 
     //Shooter
+    *
+    driverController.a().whileTrue(elevator.sysIdQuasistatic(Direction.kForward));
+    driverController.b().whileTrue(elevator.sysIdQuasistatic(Direction.kReverse));
+    driverController.x().whileTrue(elevator.sysIdQuasistatic(Direction.kForward));
+    driverController.y().whileTrue(elevator.sysIdQuasistatic(Direction.kReverse));
+    */
   }
 
   /**
