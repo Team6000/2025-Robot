@@ -34,6 +34,7 @@ public class RobotContainer {
   private final Elevator elevator = new Elevator();
   private final Shooter shooter = new Shooter();
   // private final Scrubber scrubber = new Scrubber();
+  private final LEDs leds = new LEDs();
   
   @NotLogged
   private final CommandXboxController driverController =
