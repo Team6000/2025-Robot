@@ -114,7 +114,7 @@ public class CanCoderSwerveModule extends SubsystemBase {
     * Initializes the steer motor encoder to the value of the CANCoder, accounting for the offset.
     */
     public void initSteerOffset() {
-       steerRelEncoder.setPosition(getCanCoderAngle().getRadians());
+       //steerRelEncoder.setPosition(getCanCoderAngle().getRadians());
     }
     
     /**

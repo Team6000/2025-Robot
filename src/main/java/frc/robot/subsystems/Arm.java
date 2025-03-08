@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import static frc.robot.Constants.ScrubberConstants.*;
 
 @Logged
-public class Scrubber extends SubsystemBase {
+public class Arm extends SubsystemBase {
     private final SparkMax angle = new SparkMax(angleID, MotorType.kBrushless);
     private final SparkMax flywheel = new SparkMax(flywheelID, MotorType.kBrushless);
 
@@ -30,8 +30,6 @@ public class Scrubber extends SubsystemBase {
     private final SparkMaxConfig flywheelConfig = new SparkMaxConfig();
 
     private final DutyCycleEncoder encoder = new DutyCycleEncoder(encoderChannel);
-    @NotLogged
-    private final DutyCycleEncoderSim encoderSim = new DutyCycleEncoderSim(encoder);
 
     public enum flywheelDirection {
         Forward,
@@ -39,7 +37,7 @@ public class Scrubber extends SubsystemBase {
         Stop
     }
 
-    public Scrubber() {
+    public Arm() {
         angleConfig
             .inverted(angleInverted)
             .idleMode(IdleMode.kCoast)
@@ -54,7 +52,6 @@ public class Scrubber extends SubsystemBase {
         encoder.setAssumedFrequency(975.6); // from product page
         encoder.setInverted(encoderInverted);
 
-        // encoderSim./
     }
 
     public boolean getIsSafe() {
@@ -63,9 +60,6 @@ public class Scrubber extends SubsystemBase {
 
     public Trigger isSafe = new Trigger(this::getIsSafe);
 
-    public void report() {
-        encoderSim.set(999);
-    }
 
     public Command evacuateCommand() {
         return runOnce(() -> angle.set(evacuateRate))

@@ -52,7 +52,7 @@ public class Shooter extends SubsystemBase {
         // stop when we have successful intake
         shooterClearTrigger.onFalse(runOnce(() -> {
             shoot(0);
-            hasCoral = true;
+            //hasCoral = true;
         }));
 
     }
@@ -63,15 +63,24 @@ public class Shooter extends SubsystemBase {
 
     public Trigger shooterClearTrigger = new Trigger(this::clearOfElevator);
 
-    public Command basicCommand() {
-        return runOnce(() -> {
-            shoot(1);
-            hasCoral = false;
-        })
+    public Command basicShootCommand() {
+        return run(() -> {
+            shoot(outtakeSpeed);
+            //hasCoral = false;
+        });
         // .andThen(new WaitUntilCommand(this::shooterClear))
         // .andThen(() -> shoot(0))
-        .withName("standard");
+        //.withName("shoot");
     }
+
+    public Command Stop() {
+        return run(() -> {
+            shoot(0);});
+        // .andThen(new WaitUntilCommand(this::shooterClear))
+        // .andThen(() -> shoot(0))
+        //.withName("shoot");
+    }
+
 
     public Command runSpeedCommand(double speed) {
         return startEnd(
@@ -80,26 +89,6 @@ public class Shooter extends SubsystemBase {
             .withName("Speed: " + speed);
     }
 
-    public Command shootL4() {
-        return startEnd(
-            () -> shoot(L4Speed), 
-            () -> shoot(0))
-            .withName("L4");
-    }
-
-    public Command shootMid() {
-        return startEnd(
-            () -> shoot(MidSpeed), 
-            () -> shoot(0))
-            .withName("Mid");
-    }
-
-    public Command shootL1() {
-        return startEnd(
-            () -> shootWithDifferential(L1Speed, L1SpeedDifferential), 
-            () -> shoot(0))
-            .withName("L1");
-    }
 
     private void shoot(double speed) {
         left.set(speed);

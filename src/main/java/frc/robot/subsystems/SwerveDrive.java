@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
 
 import com.studica.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.swervemodules.DataPortSwerveModule;
+import frc.robot.subsystems.swervemodules.ReduxSwerveModule;
 
 @Logged
 public class SwerveDrive extends SubsystemBase {
@@ -35,7 +37,7 @@ public class SwerveDrive extends SubsystemBase {
     private boolean isTracking = false;
 
     // Initialize new swerve module objects
-    private final DataPortSwerveModule frontLeftMod = new DataPortSwerveModule(
+    private final ReduxSwerveModule frontLeftMod = new ReduxSwerveModule(
         1,
         DriveConstants.frontLeftDriveInverted,
         DriveConstants.frontLeftSteerInverted,
@@ -93,7 +95,7 @@ public class SwerveDrive extends SubsystemBase {
     public double getSpeedFactor() {
         return speedFactor;
     }
-    private void setSpeedFactor(double newSpeedFactor) {
+    public void setSpeedFactor(double newSpeedFactor) {
         this.speedFactor = newSpeedFactor;
         Preferences.setDouble(speedFactorKey, speedFactor);
         System.out.println(speedFactor);
@@ -120,6 +122,8 @@ public class SwerveDrive extends SubsystemBase {
             .withName("Slow Down");
 
     }
+
+
 
     public boolean isTracking() {
         return isTracking;
@@ -414,6 +418,24 @@ public class SwerveDrive extends SubsystemBase {
             .withName("Encoders Test Mode");
     }
 
+    public Command turnToIDCommand(IntSupplier id) {
+        return run(() -> {
+            if (id.getAsInt() == 18) {
+                double setpoint = 5;
+                double speed = 0.2;        
+                var delta = setpoint - getHeading().getDegrees();
+                if (Math.abs(delta) > 90.0) {
+                  speed *= -1;
+                  setpoint -= Rotation2d.kPi.getDegrees();
+                }
+                
+                this.drive(0, 0, speed);
+            } else {
+                this.stop();
+            }
+        });
+    }
+
 
     /**
      * Create a new Swerve Drive, including 4 modules and a navX
@@ -473,5 +495,10 @@ public class SwerveDrive extends SubsystemBase {
         odometry.update(getHeading(), getModulePositions());
         SmartDashboard.putNumber("Angle", navX.getYaw());
         SmartDashboard.putBoolean("Field_Orient", isFieldOriented());
+
+        SmartDashboard.putNumber("flr", frontLeftMod.getSteerEncAngle().getDegrees());
+        SmartDashboard.putNumber("frr", frontLeftMod.getSteerEncAngle().getDegrees());
+        SmartDashboard.putNumber("blr", frontLeftMod.getSteerEncAngle().getDegrees());
+        SmartDashboard.putNumber("brr", frontLeftMod.getSteerEncAngle().getDegrees());
     }
 }

@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -41,19 +42,20 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.ElevatorConstants.*;
 
-@Logged
+// @Logged
 public class Elevator extends SubsystemBase {
     private static SparkMax leader = new SparkMax(leftID, MotorType.kBrushless);
     private static SparkMax follower = new SparkMax(rightID, MotorType.kBrushless);
 
-    private static SparkMaxSim leaderSim = new SparkMaxSim(leader, DCMotor.getNEO(1));
+    //private static SparkMaxSim leaderSim = new SparkMaxSim(leader, DCMotor.getNEO(1));
 
     private static SparkMaxConfig leaderConfig = new SparkMaxConfig();
     private static SparkMaxConfig followerConfig = new SparkMaxConfig();
 
-    private static RelativeEncoder mainEncoder = leader.getEncoder();
+    private static RelativeEncoder leaderEncoder = leader.getEncoder();
+    private static RelativeEncoder followerEncoder = follower.getEncoder();
 
-    private static SparkClosedLoopController mainPIDController = leader.getClosedLoopController();
+    //private static SparkClosedLoopController mainPIDController = leader.getClosedLoopController();
 
     private static ElevatorFeedforward feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
     private static ProfiledPIDController pid = new ProfiledPIDController(
@@ -74,6 +76,7 @@ public class Elevator extends SubsystemBase {
         L3(L3Height),
         L2(L2Height),
         L1(L1Height),
+        Limelight(limelightVisibilityHeight),
         Floor(bottomHeight);
 
         public final double height;
@@ -115,8 +118,12 @@ public class Elevator extends SubsystemBase {
     public Height getSetpoint() {
         return this.setpoint;
     }
+
     public double getCurrentHeight() {
-        return mainEncoder.getPosition();
+        return Math.max(leaderEncoder.getPosition(), followerEncoder.getPosition());
+    }
+    public double getCurrentVelocity() {
+        return Math.max(leaderEncoder.getVelocity(), followerEncoder.getVelocity());
     }
 
     public double remainingTimeToGoal() {
@@ -130,7 +137,7 @@ public class Elevator extends SubsystemBase {
         return motionProfile.isFinished(timer.get());
     }
 
-    public Trigger inScrubberDangerZone = new Trigger(() -> mainEncoder.getPosition() < scrubberDangerZone);
+    public Trigger inScrubberDangerZone = new Trigger(() -> getCurrentHeight() < scrubberDangerZone);
 
     public Command reefHeightCommand(Height height) {
         // if (height == Height.Floor) {
@@ -166,6 +173,48 @@ public class Elevator extends SubsystemBase {
             ).withName("Floor");
     }
     */
+
+    public Command simplestGoToHeightCommand(Height setpoint) {
+        // SmartDashboard.putNumber(key, mainEncoder.getPosition());
+
+        if (setpoint.height < 0) throw new IllegalArgumentException("Setpoint is too low");
+        if (setpoint.height > 250) throw new IllegalArgumentException("Setpoint is too high");
+
+        return run(() -> {
+            var position = getCurrentHeight();
+            if (position < setpoint.height) {
+                leader.set(0.6);
+            }  else if (position > setpoint.height + 5) {
+                leader.set(-0.6);
+            } else {
+                leader.stopMotor();
+            }
+        })
+        .finallyDo(interrupted -> leader.stopMotor())
+        .withName("Go to" + setpoint);
+    }
+
+    public Command setZeroCommand() {
+        return runOnce(() -> leaderEncoder.setPosition(0));
+    }
+    public Command disableBrakeModeCommand() {
+        return startEnd(
+            () -> {
+                leaderConfig.idleMode(IdleMode.kCoast);
+                followerConfig.idleMode(IdleMode.kCoast);
+                leader.configure(leaderConfig, null, null);
+                follower.configure(followerConfig, null, null);
+            }, 
+            () -> {
+                leaderConfig.idleMode(IdleMode.kBrake);
+                followerConfig.idleMode(IdleMode.kBrake);
+                leader.configure(leaderConfig, null, null);
+                follower.configure(followerConfig, null, null);
+            });
+    }
+
+
+
 
     @Override
     public void periodic() {
@@ -217,9 +266,9 @@ public class Elevator extends SubsystemBase {
                     .voltage(
                         appliedOutput.mut_replace(leader.getAppliedOutput() * RobotController.getBatteryVoltage(), Volts))
                     .angularPosition(
-                        angle.mut_replace(mainEncoder.getPosition(), Rotations))
+                        angle.mut_replace(getCurrentHeight(), Rotations))
                     .angularVelocity(
-                        velocity.mut_replace(mainEncoder.getVelocity(), RotationsPerSecond));
+                        velocity.mut_replace(getCurrentVelocity(), RotationsPerSecond));
             },
             this));
     /**

@@ -46,7 +46,7 @@ public final class Constants {
      * 3
     */
 
-    /*
+    
     public static final int frontLeftDriveMotorId = 11;
     public static final int frontLeftSteerMotorId = 12;
     public static final int frontLeftSteerEncoderId = 13;
@@ -62,7 +62,7 @@ public final class Constants {
     public static final int rearRightDriveMotorId = 41;
     public static final int rearRightSteerMotorId = 42;
     public static final int rearRightSteerEncoderId = 43;
-    */
+    
 
     public static final boolean  frontLeftDriveInverted = false;
     public static final boolean frontRightDriveInverted = true;
@@ -124,12 +124,12 @@ public final class Constants {
     public static final double steerMtrMaxSpeedRadPerSec = 2.0;
     public static final double steerMtrMaxAccelRadPerSecSq = 1.0;
 
-    public static final double maxDriveSpeedMetersPerSec = 1.0; //Benjy was here 5
+    public static final double maxDriveSpeedMetersPerSec = 2; //Benjy was here 5
     
-    public static final double frontLeftModuleOffset  = Units.degreesToRadians(203.4);
-    public static final double frontRightModuleOffset = Units.degreesToRadians(0);
-    public static final double backLeftModuleOffset   = Units.degreesToRadians(0);
-    public static final double backRightModuleOffset  = Units.degreesToRadians(0);
+    public static final double frontLeftModuleOffset  = Units.degreesToRadians(95);
+    public static final double frontRightModuleOffset = Units.degreesToRadians(190);
+    public static final double backLeftModuleOffset   = Units.degreesToRadians(250);
+    public static final double backRightModuleOffset  = Units.degreesToRadians(-15);
 
     /**
      * The rate the robot will spin with full Rot command.
@@ -168,7 +168,7 @@ public final class Constants {
 
   public static class ElevatorConstants {
     public static final int leftID = 50; /* leader */
-    public static final int rightID = 53; /* follower */
+    public static final int rightID = 51; /* follower */
 
     public static final boolean leftInverted = false; /* unused */
     public static final boolean rightInverted = true; /* unused */
@@ -194,14 +194,15 @@ public final class Constants {
     public static final double L3Height = 146;
     public static final double L2Height = 0;
     public static final double L1Height = 0;
+    public static final double limelightVisibilityHeight = 0;
     public static final double bottomHeight = 0;
 
     public static final double scrubberDangerZone = 0;
   }
 
   public static class ShooterConstants {
-    public static final int leftID = 51;
-    public static final int rightID = 52;
+    public static final int leftID = 52;
+    public static final int rightID = 53;
     public static final int canandcolorID = 56;
 
     public static final boolean leftInverted = false;
@@ -211,10 +212,12 @@ public final class Constants {
 
     public static final int coralDistance = 100;
 
-    public static final double L4Speed = 1; //0.75??
-    public static final double MidSpeed = 1;
-    public static final double L1Speed = 1;
-    public static final double L1SpeedDifferential = 1;
+    public static final int outtakeSpeed = 1;
+
+    // public static final double L4Speed = 1; //0.75??
+    // public static final double MidSpeed = 1;
+    // public static final double L1Speed = 1;
+    // public static final double L1SpeedDifferential = 1;
   }
   
   public static class ScrubberConstants {
@@ -237,5 +240,21 @@ public final class Constants {
     public static final double angleBumperLimit = 15;
     public static final double angleBackLimit = 50;
   }
+
+  public static final class AlignConstants{
+
+    public static final double rightRY = 3;
+    public static final double rightX = -0.12;
+    public static final double rightZ = .54;
+
+    public static final double leftRY = 0;
+    public static final double leftX = 0.20;
+    public static final double leftZ = 0.54;
+    
+    public static double centerRY = 1;
+    public static double centerTX = 0.0;
+    public static double centerTZ = 0.54;
+  }
+
   
 }

@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.epilogue.Epilogue;
+//import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
     robotContainer = new RobotContainer();
     DataLogManager.start(); // Save NetworkTables information to a file on the Rio
     // DataLogManager.log("Git SHA: " + BuildConstants.GIT_SHA); // Log what commit we're working under to "messages" and STDOUT
-    Epilogue.bind(this); // Enables @Logged annotation-based logging (by generating code for every @Logged-annotated object)
+    //Epilogue.bind(this); // Enables @Logged annotation-based logging (by generating code for every @Logged-annotated object)
   }
 
   /**

@@ -2,13 +2,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Scrubber;
+import frc.robot.subsystems.Arm;
 
 public class FloorCommand extends Command {
     private final Elevator elevator;
-    private final Scrubber scrubber;
+    private final Arm scrubber;
 
-    public FloorCommand(Elevator elevator, Scrubber scrubber) {
+    public FloorCommand(Elevator elevator, Arm scrubber) {
         this.elevator = elevator;
         this.scrubber = scrubber;
 

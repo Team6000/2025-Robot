@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveDrive;
 
@@ -64,8 +63,7 @@ public class AlignCommand extends Command {
     this.z = z;
     this.ry = ry;
 
-    addRequirements(s_Swerve);
-    addRequirements(l_LimelightSubsystem);
+    addRequirements(s_Swerve, l_LimelightSubsystem);
 
   }
 
@@ -109,7 +107,7 @@ public class AlignCommand extends Command {
     double Rotate = (Target && !RotatePID.atSetpoint() ? MathUtil.clamp(value2, -0.57, 0.57) : 0);
     SmartDashboard.putNumber("RRY", a);
     SmartDashboard.putNumber("RPID", Rotate);
-    var translation = new Translation2d(-Strafe, Translate).times(Constants.DriveConstants.maxDriveSpeedMetersPerSec);
+    var translation = new Translation2d(Strafe, Translate).times(Constants.DriveConstants.maxDriveSpeedMetersPerSec);
     s_Swerve.drive(
                 translation.getX(),
                 translation.getY(),

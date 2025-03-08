@@ -4,9 +4,14 @@
 
 package frc.robot;
 
+import frc.robot.Constants.AlignConstants;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.commands.drivetrain.AlignCommand;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Scrubber.flywheelDirection;
+import frc.robot.subsystems.Arm.flywheelDirection;
+import frc.robot.subsystems.Elevator.Height;
+
+import static frc.robot.Constants.ShooterConstants.outtakeSpeed;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -18,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -35,7 +41,8 @@ public class RobotContainer {
   private final SwerveDrive swerveDrive = new SwerveDrive();
   private final Elevator elevator = new Elevator();
   private final Shooter shooter = new Shooter();
-  private final Scrubber scrubber = new Scrubber();
+  private final Arm arm = new Arm();
+  private final LimelightSubsystem limelight = new LimelightSubsystem();
   
   @NotLogged
   private final CommandXboxController driverController =
@@ -91,47 +98,79 @@ public class RobotContainer {
    private void configureBindings() {
     /* */
     //Swerve
-    driverController.leftTrigger(ControllerConstants.triggerPressedThreshhold).whileTrue(swerveDrive.lockCommand());
-    driverController.y().onTrue(swerveDrive.speedUpCommand(0.1));
-    driverController.a().onTrue(swerveDrive.slowDownCommand(0.1));
-    driverController.back().onTrue(swerveDrive.toggleFieldOrientedCommand());
-    driverController.start().onTrue(swerveDrive.resetHeadingCommand());
+    driverController.a().onTrue(new InstantCommand(()-> swerveDrive.setSpeedFactor(2)));
+    //driverController.leftTrigger(ControllerConstants.triggerPressedThreshhold).whileTrue(swerveDrive.lockCommand());
+    driverController.b().onTrue(new InstantCommand(()-> swerveDrive.setSpeedFactor(6)));
+    driverController.x().onTrue(swerveDrive.toggleFieldOrientedCommand());    driverController.y().onTrue(swerveDrive.resetHeadingCommand());
+    
 
-    RobotModeTriggers.test().whileTrue(swerveDrive.encodersTestModeCommand());
-
+    
+    RobotModeTriggers.test().whileTrue(swerveDrive.encodersTestModeCommand());   
     swerveDrive.setDefaultCommand(
         swerveDrive.driveCommand(
-          () -> -deadband(driverController.getLeftY()),
-          () -> -deadband(driverController.getLeftX()),
-          () -> -deadband(driverController.getRightX())
+          () -> -deadband(driverController.getRawAxis(0)),
+          () -> deadband(driverController.getRawAxis(1)),
+          () -> -deadband(driverController.getRawAxis(4))
           )
     );
 
-    /*
+    driverController.x().whileTrue(new AlignCommand(limelight, AlignConstants.centerTX, AlignConstants.centerTZ, AlignConstants.centerRY, swerveDrive));
+    // driverController.x().whileTrue(swerveDrive.turnToIDCommand(() -> (int)LimelightHelpers.getFiducialID("limelight")));
+
+
+      /* */
+      operatorController.y().onTrue(elevator.simplestGoToHeightCommand(Height.L4));
+      operatorController.x().whileTrue(elevator.disableBrakeModeCommand());
+      operatorController.a().onTrue(elevator.simplestGoToHeightCommand(Height.Floor));
+      
+      operatorController.b().whileTrue(shooter.basicShootCommand());
+      operatorController.b().onFalse(shooter.Stop());
+      operatorController.povDown().onTrue(elevator.simplestGoToHeightCommand(Height.L1));
+      operatorController.povRight().onTrue(elevator.simplestGoToHeightCommand(Height.L2));
+      operatorController.povUp().onTrue(elevator.simplestGoToHeightCommand(Height.L3));
+      operatorController.povLeft().onTrue(elevator.simplestGoToHeightCommand(Height.L4));
+
+
+
+
+      // operatorController.b().onTrue(
+      //   elevator.testMidHeightCommand()
+      //   .until(driverController.leftBumper().or(driverController.rightBumper()))
+      // );
+      // operatorController.x().whileTrue(shooter.shootL4());
+      // driverController.x().onTrue(
+      //   elevator.testPowerDownCommand()
+      //   .until(driverController.leftBumper().or(driverController.rightBumper()))
+      // );
+      //operatorController.leftStick().onTrue(elevator.setZeroCommand());
+
+      //operatorController.b().onFalse(shooter.Stop());
+
+      //operatorController.pov(0).whileTrue(arm.runFlywheelCommand(flywheelDirection.Forward));
+      //operatorController.pov(180).whileTrue(arm.runFlywheelCommand(flywheelDirection.Reverse));
+      arm.setDefaultCommand(
+        arm.manualAngleControl(operatorController::getRightX)
+      );
+  
+    /* *
 
     //Elevator
-    operatorController.button(1).whileTrue(
-      scrubber.evacuateCommand()
-      .andThen(elevator.reefHeightCommand(Elevator.Height.L1)));
-    operatorController.button(2).whileTrue(elevator.reefHeightCommand(Elevator.Height.L2));
-    operatorController.button(3).whileTrue(elevator.reefHeightCommand(Elevator.Height.L3));
+    // operatorController.button(1).whileTrue(
+    //   arm.evacuateCommand()
+    //   .andThen(elevator.reefHeightCommand(Elevator.Height.L1)));
+    // operatorController.button(2).whileTrue(elevator.reefHeightCommand(Elevator.Height.L2));
+    // operatorController.button(3).whileTrue(elevator.reefHeightCommand(Elevator.Height.L3));
     operatorController.button(4).whileTrue(elevator.reefHeightCommand(Elevator.Height.L4));
-    //Scrubber
+    //arm
     //Flywheel Forward
     operatorController.button(0).onTrue(
-      scrubber.runFlywheelCommand(flywheelDirection.Forward)
+      arm.runFlywheelCommand(flywheelDirection.Forward)
       .until(operatorController.button(0).negate()));
     //Flywheel Reverse
     operatorController.button(0).onTrue(
-      scrubber.runFlywheelCommand(flywheelDirection.Forward)
+      arm.runFlywheelCommand(flywheelDirection.Forward)
       .until(operatorController.button(0).negate()));
 
-    scrubber.setDefaultCommand(
-      scrubber.manualAngleControl(operatorController::getRightX)
-    );
-
-    //Shooter
-    *
     driverController.a().whileTrue(elevator.sysIdQuasistatic(Direction.kForward));
     driverController.b().whileTrue(elevator.sysIdQuasistatic(Direction.kReverse));
     driverController.x().whileTrue(elevator.sysIdQuasistatic(Direction.kForward));
@@ -165,3 +204,5 @@ public class RobotContainer {
     
   }
 }
+
+
