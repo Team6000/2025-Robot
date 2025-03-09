@@ -254,7 +254,7 @@ public class SwerveDrive extends SubsystemBase {
      * @return The current heading of the robot.
      */
     public Rotation2d getHeading() {
-        return Rotation2d.fromDegrees(-navX.getYaw());
+        return Rotation2d.fromDegrees(-navX.getAngle());
     }
 
     /**
@@ -438,6 +438,12 @@ public class SwerveDrive extends SubsystemBase {
         });
     }
 
+    public Command pauseFieldOrientedCommand() {
+        return startEnd(
+            () -> navX.setAngleAdjustment(navX.getAngle()),
+            () -> navX.setAngleAdjustment(0));
+    }
+
 
     /**
      * Create a new Swerve Drive, including 4 modules and a navX
@@ -495,7 +501,7 @@ public class SwerveDrive extends SubsystemBase {
     public void periodic() {
         // Updates the odometry every 20ms
         odometry.update(getHeading(), getModulePositions());
-        SmartDashboard.putNumber("Angle", navX.getYaw());
+        SmartDashboard.putNumber("Angle", getHeading().getDegrees());
         SmartDashboard.putBoolean("Field_Orient", isFieldOriented());
 
         SmartDashboard.putNumber("flr", frontLeftMod.getSteerEncAngle().getDegrees());

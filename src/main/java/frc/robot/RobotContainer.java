@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -41,7 +42,7 @@ public class RobotContainer {
   private final SwerveDrive swerveDrive = new SwerveDrive();
   private final Elevator elevator = new Elevator();
   private final Shooter shooter = new Shooter();
-  private final Arm arm = new Arm();
+  // private final Arm arm = new Arm();
   private final LimelightSubsystem limelight = new LimelightSubsystem();
   
   @NotLogged
@@ -101,10 +102,12 @@ public class RobotContainer {
     driverController.a().onTrue(new InstantCommand(()-> swerveDrive.setSpeedFactor(2)));
     //driverController.leftTrigger(ControllerConstants.triggerPressedThreshhold).whileTrue(swerveDrive.lockCommand());
     driverController.b().onTrue(new InstantCommand(()-> swerveDrive.setSpeedFactor(6)));
-    driverController.x().onTrue(swerveDrive.toggleFieldOrientedCommand());    driverController.y().onTrue(swerveDrive.resetHeadingCommand());
-    
+    driverController.back().onTrue(swerveDrive.toggleFieldOrientedCommand());
+    driverController.start().onTrue(swerveDrive.resetHeadingCommand());
+    driverController.leftStick().whileTrue(swerveDrive.pauseFieldOrientedCommand());
 
-    
+
+        
     RobotModeTriggers.test().whileTrue(swerveDrive.encodersTestModeCommand());   
     swerveDrive.setDefaultCommand(
         swerveDrive.driveCommand(
@@ -114,21 +117,41 @@ public class RobotContainer {
           )
     );
 
-    driverController.x().whileTrue(new AlignCommand(limelight, AlignConstants.centerTX, AlignConstants.centerTZ, AlignConstants.centerRY, swerveDrive));
+    driverController.x().whileTrue(
+      new AlignCommand(limelight, AlignConstants.centerTX, AlignConstants.centerTZ, AlignConstants.centerRY, swerveDrive)
+      .andThen(
+        Commands.runOnce(
+          () -> swerveDrive.drive(0, 0.2, 0),
+          swerveDrive)
+        .withTimeout(0.5))
+      .andThen(
+        Commands.runOnce(
+          () -> swerveDrive.drive(0, 0, 0), 
+          swerveDrive))
+      );
     // driverController.x().whileTrue(swerveDrive.turnToIDCommand(() -> (int)LimelightHelpers.getFiducialID("limelight")));
 
 
       /* */
-      operatorController.y().onTrue(elevator.simplestGoToHeightCommand(Height.L4));
+      //elevator
+      operatorController.y().onTrue(
+        elevator.simplestGoToHeightCommand(Height.L4)
+        .until(operatorController.leftBumper().or(operatorController.rightBumper()))
+        );
+      operatorController.a().onTrue(
+        elevator.simplestGoToHeightCommand(Height.Floor)
+        .until(operatorController.leftBumper().or(operatorController.rightBumper()))        
+        );
       operatorController.x().whileTrue(elevator.disableBrakeModeCommand());
-      operatorController.a().onTrue(elevator.simplestGoToHeightCommand(Height.Floor));
-      
+      // operatorController.povDown().onTrue(elevator.simplestGoToHeightCommand(Height.L1));
+      // operatorController.povRight().onTrue(elevator.simplestGoToHeightCommand(Height.L2));
+      // operatorController.povUp().onTrue(elevator.simplestGoToHeightCommand(Height.L3));
+      // operatorController.povLeft().onTrue(elevator.simplestGoToHeightCommand(Height.L4));
+
       operatorController.b().whileTrue(shooter.basicShootCommand());
-      operatorController.b().onFalse(shooter.Stop());
-      operatorController.povDown().onTrue(elevator.simplestGoToHeightCommand(Height.L1));
-      operatorController.povRight().onTrue(elevator.simplestGoToHeightCommand(Height.L2));
-      operatorController.povUp().onTrue(elevator.simplestGoToHeightCommand(Height.L3));
-      operatorController.povLeft().onTrue(elevator.simplestGoToHeightCommand(Height.L4));
+      operatorController.b().onFalse(shooter.stop());
+      
+
 
 
 
@@ -148,9 +171,10 @@ public class RobotContainer {
 
       //operatorController.pov(0).whileTrue(arm.runFlywheelCommand(flywheelDirection.Forward));
       //operatorController.pov(180).whileTrue(arm.runFlywheelCommand(flywheelDirection.Reverse));
-      arm.setDefaultCommand(
-        arm.manualAngleControl(operatorController::getRightX)
-      );
+
+      // arm.setDefaultCommand(
+      //   arm.manualAngleControl(operatorController::getRightX)
+      // );
   
     /* *
 

@@ -73,7 +73,7 @@ public class Shooter extends SubsystemBase {
         //.withName("shoot");
     }
 
-    public Command Stop() {
+    public Command stop() {
         return run(() -> {
             shoot(0);});
         // .andThen(new WaitUntilCommand(this::shooterClear))

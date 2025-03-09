@@ -251,9 +251,9 @@ public final class Constants {
     public static final double leftX = 0.20;
     public static final double leftZ = 0.54;
     
-    public static double centerRY = 1;
+    public static double centerRY = 0; //11
     public static double centerTX = 0.0;
-    public static double centerTZ = 0.54;
+    public static double centerTZ = 0.0; //0.54
   }
 
   
