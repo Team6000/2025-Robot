@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.subsystems.swervemodules.CanCoderSwerveModule;
 import frc.robot.subsystems.swervemodules.DataPortSwerveModule;
 import frc.robot.subsystems.swervemodules.ReduxSwerveModule;
 
@@ -35,9 +36,10 @@ public class SwerveDrive extends SubsystemBase {
     private String speedFactorKey = "Speed";
     private double speedFactor = Preferences.getDouble(speedFactorKey, 0.3);
     private boolean isTracking = false;
+    private int autoCounter = 0;
 
     // Initialize new swerve module objects
-    private final ReduxSwerveModule frontLeftMod = new ReduxSwerveModule(
+    private final CanCoderSwerveModule frontLeftMod = new CanCoderSwerveModule(
         1,
         DriveConstants.frontLeftDriveInverted,
         DriveConstants.frontLeftSteerInverted,
@@ -354,7 +356,7 @@ public class SwerveDrive extends SubsystemBase {
     public void drive(double driveX, double driveY, double rotation) {  
         if(driveX != 0.0 || driveY != 0.0 || rotation != 0.0) isLocked = false;
         
-        if(isLocked) {
+        if(isLocked && false) {
             setModuleStates(new SwerveModuleState[] {
                 new SwerveModuleState(0.0, new Rotation2d(0.25 * Math.PI)),
                 new SwerveModuleState(0.0, new Rotation2d(-0.25 * Math.PI)),
@@ -500,5 +502,14 @@ public class SwerveDrive extends SubsystemBase {
         SmartDashboard.putNumber("frr", frontLeftMod.getSteerEncAngle().getDegrees());
         SmartDashboard.putNumber("blr", frontLeftMod.getSteerEncAngle().getDegrees());
         SmartDashboard.putNumber("brr", frontLeftMod.getSteerEncAngle().getDegrees());
+
+        // if (DriverStation.isAutonomous() && DriverStation.isEnabled()){
+        //     if (autoCounter < 200){
+        //         setChassisSpeeds(new ChassisSpeeds(0.1, 0, 0));
+        //     } else {
+        //     setChassisSpeeds(new ChassisSpeeds(0, 0, 0));
+        //     }
+        //     autoCounter++;
+        // }
     }
 }

@@ -200,7 +200,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return autoSelector.getSelected();
+    // return autoSelector.getSelected();
+    return swerveDrive.driveCommand(()-> 0.3, ()-> 0, ()->0).withTimeout(1);
+  
     
   }
 }
