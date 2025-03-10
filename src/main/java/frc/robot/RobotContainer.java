@@ -40,17 +40,17 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 public class RobotContainer {
   // Initialize subsystems.
   private final SwerveDrive swerveDrive = new SwerveDrive();
-  private final Elevator elevator = new Elevator();
-  private final Shooter shooter = new Shooter();
+  // private final Elevator elevator = new Elevator();
+  // private final Shooter shooter = new Shooter();
   // private final Arm arm = new Arm();
-  private final LimelightSubsystem limelight = new LimelightSubsystem();
+  // private final LimelightSubsystem limelight = new LimelightSubsystem();
   
   @NotLogged
   private final CommandXboxController driverController =
     new CommandXboxController(ControllerConstants.driverControllerPort);
-  @NotLogged
-  private final CommandXboxController operatorController =
-    new CommandXboxController(ControllerConstants.operatorControllerPort);
+  // @NotLogged
+  // private final CommandXboxController operatorController =
+  //   new CommandXboxController(ControllerConstants.operatorControllerPort);
 
   // Initialize auto selector.
   private final SendableChooser<Command> autoSelector = AutoBuilder.buildAutoChooser();
@@ -117,6 +117,7 @@ public class RobotContainer {
           )
     );
 
+    /*
     driverController.x().whileTrue(
       new AlignCommand(limelight, AlignConstants.centerTX, AlignConstants.centerTZ, AlignConstants.centerRY, swerveDrive)
       .andThen(
@@ -130,9 +131,10 @@ public class RobotContainer {
           swerveDrive))
       );
     // driverController.x().whileTrue(swerveDrive.turnToIDCommand(() -> (int)LimelightHelpers.getFiducialID("limelight")));
+    */
 
 
-      /* */
+      /* *
       //elevator
       operatorController.y().onTrue(
         elevator.simplestGoToHeightCommand(Height.L4)
@@ -150,6 +152,7 @@ public class RobotContainer {
 
       operatorController.b().whileTrue(shooter.basicShootCommand());
       operatorController.b().onFalse(shooter.stop());
+      */
       
 
 
@@ -225,7 +228,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return autoSelector.getSelected();
-    return swerveDrive.driveCommand(()-> 0.3, ()-> 0, ()->0).withTimeout(1);
+    return swerveDrive.driveCommand(()-> 0, ()-> -0.3, ()->0).withTimeout(1);
   
     
   }
