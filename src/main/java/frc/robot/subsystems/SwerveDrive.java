@@ -183,7 +183,7 @@ public class SwerveDrive extends SubsystemBase {
      * @param moduleStates the module states to set.
      */
     public void setModuleStatesAuto(SwerveModuleState[] moduleStates) {
-        frontLeftMod.setDesiredState(moduleStates[0], true);
+        frontLeftMod.setDesiredState(moduleStates[0], true);    
         frontRightMod.setDesiredState(moduleStates[1], true);
         backLeftMod.setDesiredState(moduleStates[2], true);
         backRightMod.setDesiredState(moduleStates[3], true);
@@ -294,7 +294,7 @@ public class SwerveDrive extends SubsystemBase {
      * Resets the current pose.
      */
     public void resetPose() {
-        resetDriveDistances();
+        //resetDriveDistances();
         resetHeading();
 
         odometry = new SwerveDrivePoseEstimator(
@@ -443,7 +443,6 @@ public class SwerveDrive extends SubsystemBase {
             () -> navX.setAngleAdjustment(navX.getAngle()),
             () -> navX.setAngleAdjustment(0));
     }
-
 
     /**
      * Create a new Swerve Drive, including 4 modules and a navX

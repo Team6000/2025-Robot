@@ -40,17 +40,17 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 public class RobotContainer {
   // Initialize subsystems.
   private final SwerveDrive swerveDrive = new SwerveDrive();
-  // private final Elevator elevator = new Elevator();
-  // private final Shooter shooter = new Shooter();
-  // private final Arm arm = new Arm();
-  // private final LimelightSubsystem limelight = new LimelightSubsystem();
+  private final Elevator elevator = new Elevator();
+  private final Shooter shooter = new Shooter();
+  private final Arm arm = new Arm();
+  private final LimelightSubsystem limelight = new LimelightSubsystem();
   
   @NotLogged
   private final CommandXboxController driverController =
     new CommandXboxController(ControllerConstants.driverControllerPort);
-  // @NotLogged
-  // private final CommandXboxController operatorController =
-  //   new CommandXboxController(ControllerConstants.operatorControllerPort);
+  @NotLogged
+  private final CommandXboxController operatorController =
+    new CommandXboxController(ControllerConstants.operatorControllerPort);
 
   // Initialize auto selector.
   private final SendableChooser<Command> autoSelector = AutoBuilder.buildAutoChooser();
@@ -117,67 +117,39 @@ public class RobotContainer {
           )
     );
 
-    /*
-    driverController.x().whileTrue(
-      new AlignCommand(limelight, AlignConstants.centerTX, AlignConstants.centerTZ, AlignConstants.centerRY, swerveDrive)
-      .andThen(
-        Commands.runOnce(
-          () -> swerveDrive.drive(0, 0.2, 0),
-          swerveDrive)
-        .withTimeout(0.5))
-      .andThen(
-        Commands.runOnce(
-          () -> swerveDrive.drive(0, 0, 0), 
-          swerveDrive))
-      );
+    driverController.x().whileTrue(new AlignCommand(limelight, AlignConstants.leftX, AlignConstants.leftZ, AlignConstants.leftRY, swerveDrive));
     // driverController.x().whileTrue(swerveDrive.turnToIDCommand(() -> (int)LimelightHelpers.getFiducialID("limelight")));
-    */
 
 
-      /* *
-      //elevator
+      /* */
       operatorController.y().onTrue(
         elevator.simplestGoToHeightCommand(Height.L4)
-        .until(operatorController.leftBumper().or(operatorController.rightBumper()))
-        );
-      operatorController.a().onTrue(
-        elevator.simplestGoToHeightCommand(Height.Floor)
-        .until(operatorController.leftBumper().or(operatorController.rightBumper()))        
-        );
-      operatorController.x().whileTrue(elevator.disableBrakeModeCommand());
-      // operatorController.povDown().onTrue(elevator.simplestGoToHeightCommand(Height.L1));
-      // operatorController.povRight().onTrue(elevator.simplestGoToHeightCommand(Height.L2));
-      // operatorController.povUp().onTrue(elevator.simplestGoToHeightCommand(Height.L3));
-      // operatorController.povLeft().onTrue(elevator.simplestGoToHeightCommand(Height.L4));
-
-      operatorController.b().whileTrue(shooter.basicShootCommand());
-      operatorController.b().onFalse(shooter.stop());
-      */
-      
-
-
-
-
-
+        .until(driverController.leftBumper().or(driverController.rightBumper()))
+      );
       // operatorController.b().onTrue(
       //   elevator.testMidHeightCommand()
       //   .until(driverController.leftBumper().or(driverController.rightBumper()))
       // );
+      operatorController.a().onTrue(
+        elevator.simplestGoToHeightCommand(Height.Floor)
+        .until(driverController.leftBumper().or(driverController.rightBumper()))
+      );
       // operatorController.x().whileTrue(shooter.shootL4());
       // driverController.x().onTrue(
       //   elevator.testPowerDownCommand()
       //   .until(driverController.leftBumper().or(driverController.rightBumper()))
       // );
-      //operatorController.leftStick().onTrue(elevator.setZeroCommand());
+      operatorController.x().whileTrue(elevator.disableBrakeModeCommand());
+      operatorController.leftStick().onTrue(elevator.setZeroCommand());
 
+      operatorController.b().whileTrue(shooter.runSpeedCommand(0.5));
       //operatorController.b().onFalse(shooter.Stop());
 
       //operatorController.pov(0).whileTrue(arm.runFlywheelCommand(flywheelDirection.Forward));
       //operatorController.pov(180).whileTrue(arm.runFlywheelCommand(flywheelDirection.Reverse));
-
-      // arm.setDefaultCommand(
-      //   arm.manualAngleControl(operatorController::getRightX)
-      // );
+      arm.setDefaultCommand(
+        arm.manualAngleControl(operatorController::getRightX)
+      );
   
     /* *
 
